@@ -21,12 +21,12 @@ object AMFBenchmark
     measurer)
 
   override lazy val measurer = new Measurer.Default
-  override lazy val reporter = new AMFReporter[Double]
+  override lazy val reporter = new AMFLogReporter[Double]
   override lazy val persistor: Persistor.None.type = Persistor.None
 
   /* inputs */
 
-  val inputFile: Gen[String] = Gen.single("inputFile")("src/main/resources/simple.raml")
+  val inputFile: Gen[String] = Gen.enumeration("inputFile")("src/main/resources/raml08/simple.raml", "src/main/resources/raml10/simple.raml")
 
   /* initialization */
   AMF.init().get()
@@ -34,7 +34,7 @@ object AMFBenchmark
   /* tests */
 
   performance of "AMF" in {
-    measure method "parse" in {
+    measure method "parseFileAsync" in {
       using(inputFile) in {
         f => testParse(f)
       }
@@ -42,7 +42,7 @@ object AMFBenchmark
   }
 
   performance of "AMF" in {
-    measure method "validation" in {
+    measure method "validate" in {
       using(inputFile) in {
         f => testValidation(f)
       }
