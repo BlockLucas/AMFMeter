@@ -7,10 +7,8 @@ import org.mule.core.Specs.APIType
 object AmfResolutionHelper {
 
   def handleResolution(kind: APIType, baseUnit: BaseUnit): Either[Throwable, BaseUnit] = {
-    println("about to resolve")
     try {
         val b = resolve(baseUnit, kind)
-        println("resolved")
         Right(b)
     } catch {
       case s: StackOverflowError => Left(s)

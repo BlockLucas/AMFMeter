@@ -4,10 +4,11 @@ import java.io.File
 
 import amf.AMF
 import amf.model.document.BaseUnit
-import org.mule.amf.{AmfParsingHelper, AmfValidationHelper}
+import org.mule.amf.{AmfParsingHelper, AmfResolutionHelper, AmfValidationHelper}
 import org.mule.core.Specs
 import org.scalameter.api._
 import org.scalameter.picklers.Implicits._
+
 import scala.collection.JavaConverters._
 
 object AMFBenchmark
@@ -26,7 +27,11 @@ object AMFBenchmark
 
   /* inputs */
 
-  val inputFile: Gen[String] = Gen.enumeration("inputFile")("src/main/resources/raml08/simple.raml", "src/main/resources/raml10/simple.raml")
+  val inputFile: Gen[String] = Gen.enumeration("inputFile")(
+    "src/main/resources/raml08/only_title.raml",
+    "src/main/resources/raml10/only_title.raml",
+    "src/main/resources/raml08/longest_valid_validation_platform.raml",
+    "src/main/resources/raml10/longest_valid_validation_platform.raml")
 
   /* initialization */
   AMF.init().get()
@@ -49,12 +54,38 @@ object AMFBenchmark
     }
   }
 
+  performance of "AMF" in {
+    measure method "resolution" in {
+      using(inputFile) in {
+        f => testResolution(f)
+      }
+    }
+  }
+
   def testParse(file: String): Unit = {
     testParse(new File(file))
   }
 
   def testValidation(file: String): Unit = {
     testValidation(new File(file))
+  }
+
+  def testResolution(file: String): Unit = {
+    testResolution(new File(file))
+  }
+
+  def testResolution(file: File): Unit = {
+    var baseUnit: BaseUnit = null
+    val apiKind = Specs.getApiKind(file)
+    AmfParsingHelper.handleParse(file, apiKind) match {
+      case Right(b) => baseUnit = b
+      case Left(e) => printAndThrow(s"AMF PARSING ERROR: ${e.getMessage}", e)
+    }
+
+    AmfResolutionHelper.handleResolution(apiKind, baseUnit) match {
+      case Right(_) => // do nothing
+      case Left(e) => printAndThrow(s"AMF RESOLUTION ERROR: ${e.getMessage}", e)
+    }
   }
 
   def testParse(file: File): Unit ={
