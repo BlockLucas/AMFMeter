@@ -6,6 +6,7 @@ import amf.AMF
 import amf.model.document.BaseUnit
 import org.mule.amf.{AmfParsingHelper, AmfResolutionHelper, AmfValidationHelper}
 import org.mule.core.Specs
+//import org.scalameter.Key
 import org.scalameter.api._
 import org.scalameter.picklers.Implicits._
 
@@ -31,7 +32,9 @@ object AMFBenchmark
     "src/main/resources/raml08/only_title.raml",
     "src/main/resources/raml10/only_title.raml",
     "src/main/resources/raml08/longest_valid_validation_platform.raml",
-    "src/main/resources/raml10/longest_valid_validation_platform.raml")
+    "src/main/resources/raml10/longest_valid_validation_platform.raml",
+    "src/main/resources/raml08/longest_platform.raml",
+    "src/main/resources/raml10/longest_platform.raml")
 
   /* initialization */
   AMF.init().get()

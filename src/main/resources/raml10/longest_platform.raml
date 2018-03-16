@@ -1,0 +1,5066 @@
+#%RAML 1.0
+---
+#Producao
+#baseUri: http://api.deliveryhabibs.com.br/csiweb-habibs/api/secure
+#Desenv
+baseUri: http://apidesenv.deliveryhabibs.com.br/csiweb-habibs/api/secure
+
+title: WebService New DeliPlus
+version: 1.1
+
+uses:
+  traits: traits.raml
+
+/../token:
+  get:
+    description:
+      O serviÃ§o de token  deve ser utilizado para recuperar um pequeno conjunto de informaÃ§Ãµes das quais os outros mÃ©todos fazem uso, dentre elas o Token de autenticaÃ§Ã£o para as chamadas dos outros mÃ³todos do webservice, o cÃ³digo de loja padrÃ£o para as consultas de produtos e grupos de modo que esta loja sempre terÃ¡ disponibilidade total dos produtos fornecidos pela rede e o tempo de duraÃ§Ã£o mÃ¡ximo de um pedido antes que o mesmo seja automaticamente cancelado por abandono da bandeja.
+    queryParameters:
+      idOrigem:
+        type: number
+        description: Define o dispositivo que estÃ¡ originando o pedido, podendo sendo Desktop[2], iPhone[4], Android[3]
+        example: 2
+        required: true
+      idEmpresa:
+        type: number
+        description: Define a empresa que estÃ¡ originando o pedido, sendo Habib's[1] ou Ragazzo[2]
+        example: 1
+        required: true
+    responses:
+      200:
+        description: A chamada obteve sucesso
+        body:
+          application/json:
+            example: |
+              {
+                "token": "47c2f98b-5e2f-42a0-85a1-b6f63c65e5db",
+                "tempoCancelamentoPedido": 30,
+                "lojaPadrao": "9999"
+              }
+      400:
+        description: Houve um erro durante a execuÃ§Ã£o do mÃ©todo
+        body:
+          application/json:
+            example: |
+              {
+                "errors": [{
+                  "codigo": 999,
+                  "mensagem": "NÃ£o foi possÃ­vel localizar a origem [41] para a empresa [1]",
+                  "p1": null
+                }]
+              }
+/../configuracoes:
+  get:
+    description:
+      O serviÃ§o de configuracoes deve ser utilizado para recuperar um pequeno conjunto de informaÃ§Ãµes das quais os outros mÃ©todos fazem uso, dentre elas o Token de autenticaÃ§Ã£o para as chamadas dos outros mÃ³todos do webservice, o cÃ³digo de loja padrÃ£o para as consultas de produtos e grupos de modo que esta loja sempre terÃ¡ disponibilidade total dos produtos fornecidos pela rede e o tempo de duraÃ§Ã£o mÃ¡ximo de um pedido antes que o mesmo seja automaticamente cancelado por abandono da bandeja.
+    queryParameters:
+      idOrigem:
+        type: number
+        description: Define o dispositivo que estÃ¡ originando o pedido, podendo sendo Desktop[2], iPhone[4], Android[3]
+        example: 2
+        required: true
+      idEmpresa:
+        type: number
+        description: Define a empresa que estÃ¡ originando o pedido, sendo Habib's[1] ou Ragazzo[2]
+        example: 1
+        required: true
+    responses:
+      200:
+        description: A chamada obteve sucesso
+        body:
+          application/json:
+            example: |
+              {
+                "token": "47c2f98b-5e2f-42a0-85a1-b6f63c65e5db",
+                "tempoCancelamentoPedido": 60,
+                "lojaPadrao": "9999"
+              }
+      400:
+        description: Houve um erro durante a execuÃ§Ã£o do mÃ©todo
+        body:
+          application/json:
+            example: |
+              {
+                "errors": [{
+                  "codigo": 999,
+                  "mensagem": "NÃ£o foi possÃ­vel obter as configuraÃ§Ãµes para a empresa[1] e origem [2]",
+                  "p1": null
+                }]
+              }
+/produtos:
+  get:
+    description:
+      O serviÃ§o de configuraÃ§oes deve ser utilizado para recuperar os produtos e todos seus dados especificos a partir do cÃ³digo do produto, nome ou grupo.
+    queryParameters:
+      aToken:
+        type: string
+        description: Define o token para a realizaÃ§Ã£o da consulta
+        example: 47c2f98b-5e2f-42a0-85a1-b6f63c65e5db
+        required: true
+      idEmpresa:
+        type: number
+        description: Define a empresa que estÃ¡ originando o pedido, sendo Habib's[1] ou Ragazzo[2]
+        example: 1
+        required: true
+      cdLoja:
+        type: number
+        description: Define a loja da qual queremos ler os grupos ativos
+        example: 9999
+        required: true
+      codProduto:
+        type: number
+        description: Define a busca de produtos a partir do cÃ³digo corporativo do produto
+        example: 25
+        required: false
+      descricaoProduto:
+        type: string
+        description: Define a busca de produtos a partir do nome do produto ou descriÃ§Ã£o do mesmo
+        example: bib'sfiha
+        required: false
+      grupo:
+        type: number
+        description: Define a busca de produtos a partir do grupo
+        example: 4
+        required: false
+      codSubGrupo:
+        type: number
+        description: Define a busca de produtos a partir do subgrupo. (para este tipo de consulta, o grupo pode ser atÃ© mesmo definido como zero, pois serÃ¡ ignorado, mas nÃ£o tinha sua obrigatoriedade como um dos parametros aceitÃ¡veis).
+        example: 81
+        required: false
+      perPage:
+        type: number
+        description: Define quantos itens por vez devem ser retornados a fim de possibilitar paginaÃ§Ã£o ou rolagem infinita
+        example: 10
+        required: false
+      page:
+        type: number
+        description: Define o numero da pÃ¡gina que deve ser devolvida, este parÃ¢metro depende do parÃ¢metro "perPage" e possibilita paginaÃ§Ã£o ou rolagem infinita
+        example: 1
+        required: false
+      #sort:
+      #  type: string
+      #  description: Define o campo pelo qual ordenar a consulta retornada
+      #  example: descricao
+      #  required: false
+      #order:
+      #  type: string
+      #  description: Define a ordenaÃ§Ã£o do retorno "ASC" ou "DESC"
+      #  example: ASC
+      #  required: false
+    responses:
+      200:
+        description: A chamada obteve sucesso
+        body:
+          application/json:
+            example: |
+              {
+                "pageCount": 1,
+                "data": [{
+                  "preco": 19.9,
+                  "inativo": false,
+                  "possuiAgregados": true,
+                  "idProduto": 61,
+                  "disponivel": true,
+                  "descricao": "BEIRUTE HABIBS",
+                  "combinado": false,
+                  "id": 61,
+                  "possuiPromocoesProduto": false,
+                  "possuiComplementos": true,
+                  "crossSelling": [{
+                    "id": 77,
+                    "preco": 5.7,
+                    "possuiComplementos": false,
+                    "possuiAgregados": false,
+                    "disponivel": true,
+                    "idProduto": 77,
+                    "combinado": false,
+                    "descricao": "PEPSI TWIST LATA",
+                    "codProduto": "1524"
+                  }, {
+                    "id": 75,
+                    "preco": 0.98,
+                    "possuiComplementos": false,
+                    "possuiAgregados": false,
+                    "disponivel": true,
+                    "idProduto": 75,
+                    "combinado": false,
+                    "descricao": "MINI CHURROS",
+                    "codProduto": "2679"
+                  }, {
+                    "id": 66,
+                    "preco": 8.9,
+                    "possuiComplementos": false,
+                    "possuiAgregados": false,
+                    "disponivel": true,
+                    "idProduto": 66,
+                    "combinado": false,
+                    "descricao": "SUCO ABACAXI 500ML + 500ML (GRATIS)",
+                    "codProduto": "4878"
+                  }, {
+                    "id": 65,
+                    "preco": 8.9,
+                    "possuiComplementos": true,
+                    "possuiAgregados": true,
+                    "disponivel": true,
+                    "idProduto": 65,
+                    "combinado": false,
+                    "descricao": "SUCO MORANGO 500ML + 500ML (GRATIS)",
+                    "codProduto": "4881"
+                  }, {
+                    "id": 64,
+                    "preco": 5.7,
+                    "possuiComplementos": false,
+                    "possuiAgregados": false,
+                    "disponivel": false,
+                    "idProduto": 64,
+                    "combinado": false,
+                    "descricao": "COCA COLA LATA 350ML",
+                    "codProduto": "521"
+                  }],
+                  "agregados": [{
+                    "id": 1,
+                    "descricao": "GUARDANAPO",
+                    "codigoCorporativo": "99953",
+                    "selecionado": false,
+                    "quantidade": 0
+                  }, {
+                    "id": 2,
+                    "descricao": "MOSTARDA",
+                    "codigoCorporativo": "99954",
+                    "selecionado": false,
+                    "quantidade": 0
+                  }, {
+                    "id": 3,
+                    "descricao": "KETCHUP",
+                    "codigoCorporativo": "99955",
+                    "selecionado": false,
+                    "quantidade": 0
+                  }, {
+                    "id": 5,
+                    "descricao": "TALHER",
+                    "codigoCorporativo": "99956",
+                    "selecionado": false,
+                    "quantidade": 0
+                  }, {
+                    "id": 21,
+                    "descricao": "BARBECURE",
+                    "codigoCorporativo": "99952",
+                    "selecionado": false,
+                    "quantidade": 0
+                  }],
+                  "fotos": [
+                    {
+                      "title": "BEIRUTE HABIBS",
+                      "url": "http://172.25.220.158:8080/csiweb-habibs/adm/CarregaImagemFoto.do?id_fopr_cd_fotoprod=25"
+                    }
+                  ],
+                  "complementos": [{
+                    "id": 1,
+                    "tipo": "COM",
+                    "idProduto": 61,
+                    "idComplementoProduto": 79,
+                    "descricaoProdutoComplemento": "BACON EXTRA",
+                    "preco": 3.5,
+                    "valorTotal": 0,
+                    "selecionado": false,
+                    "quantidade": 0,
+                    "descricao": "COM BACON EXTRA"
+                  }, {
+                    "id": 2,
+                    "tipo": "SEM",
+                    "idProduto": 61,
+                    "idComplementoProduto": 42,
+                    "descricaoProdutoComplemento": "TOMATE",
+                    "selecionado": false,
+                    "quantidade": 0,
+                    "descricao": "SEM TOMATE"
+                  }, {
+                    "id": 21,
+                    "tipo": "SEM",
+                    "idProduto": 61,
+                    "idComplementoProduto": 41,
+                    "descricaoProdutoComplemento": "ALFACE",
+                    "selecionado": false,
+                    "quantidade": 0,
+                    "descricao": "SEM ALFACE"
+                  }],
+                  "codProduto": "25"
+                }]
+              }
+      400:
+        description: Houve um erro durante a execuÃ§Ã£o do mÃ©todo
+        body:
+          application/json:
+            example: |
+              {
+                "errors": [{
+                  "codigo": 999,
+                  "mensagem": "Ao menos ums dos seguintes parÃ¢metros [codProduto, descricaoProduto, grupo] deve informado.",
+                  "p1": null
+                }]
+              }
+  post:
+    description:
+      O serviÃ§o de configuraÃ§oes deve ser utilizado para recuperar os produtos e todos seus dados especificos a partir do cÃ³digo do produto, nome ou grupo.
+    queryParameters:
+      aToken:
+        type: string
+        description: Define o token para a realizaÃ§Ã£o da consulta
+        example: 47c2f98b-5e2f-42a0-85a1-b6f63c65e5db
+        required: true
+      idEmpresa:
+        type: number
+        description: Define a empresa que estÃ¡ originando o pedido, sendo Habib's[1] ou Ragazzo[2]
+        example: 1
+        required: true
+      cdLoja:
+        type: number
+        description: Define a loja da qual queremos ler os grupos ativos
+        example: 9999
+        required: true
+      perPage:
+        type: number
+        description: Define quantos itens por vez devem ser retornados a fim de possibilitar paginaÃ§Ã£o ou rolagem infinita
+        example: 99999
+        required: false
+      page:
+        type: number
+        description: Define o numero da pÃ¡gina que deve ser devolvida, este parÃ¢metro depende do parÃ¢metro "perPage" e possibilita paginaÃ§Ã£o ou rolagem infinita
+        example: 1
+        required: false
+    body:
+      application/json:
+        example: |
+          {
+            "produtos": [600, 7177]
+          }
+    responses:
+      200:
+        description: A chamada obteve sucesso
+        body:
+          application/json:
+            example: |
+              {
+                "pageCount": 1,
+                "data": [{
+                  "preco": 6.9,
+                  "inativo": false,
+                  "possuiAgregados": false,
+                  "disponivel": true,
+                  "idProduto": 70,
+                  "descricao": "BATATA GRANDE",
+                  "combinado": false,
+                  "id": 70,
+                  "possuiPromocoesProduto": false,
+                  "possuiComplementos": false,
+                  "crossSelling": [],
+                  "agregados": [],
+                  "fotos": [],
+                  "complementos": [],
+                  "codProduto": "7177"
+                }, {
+                  "preco": 5.8,
+                  "inativo": false,
+                  "possuiAgregados": false,
+                  "disponivel": true,
+                  "idProduto": 69,
+                  "descricao": "BATATA MEDIA",
+                  "combinado": false,
+                  "id": 69,
+                  "possuiPromocoesProduto": false,
+                  "possuiComplementos": false,
+                  "crossSelling": [],
+                  "agregados": [],
+                  "fotos": [{
+                    "title": "BATATA MEDIA",
+                    "url": "http://172.25.220.158:8080/csiweb-habibs/adm/CarregaImagemFoto.do?id_fopr_cd_fotoprod=101"
+                  }],
+                  "complementos": [],
+                  "codProduto": "600"
+                }]
+              }
+      400:
+        description: Houve um erro durante a execuÃ§Ã£o do mÃ©todo
+        body:
+          application/json:
+            example: |
+              {
+                "errors": [{
+                  "codigo": 999,
+                  "mensagem": "NÃ£o foi possÃ­vel encontrar a loja \n",
+                  "p1": null
+                }]
+              }
+  /grupos:
+    get:
+      description:
+        O serviÃ§o de grupos deve ser utilizado para recuperar nomes e codigos dos grupos e subgrupos de produtos ativos para a empresa e loja pesquisada, possibilitando a busca categorizada de produtos por categorias e subcategorias.
+      queryParameters:
+        aToken:
+          type: string
+          description: Define o token para a realizaÃ§Ã£o da consulta
+          example: 47c2f98b-5e2f-42a0-85a1-b6f63c65e5db
+          required: true
+        idEmpresa:
+          type: number
+          description: Define a empresa que estÃ¡ originando o pedido, sendo Habib's[1] ou Ragazzo[2]
+          example: 1
+          required: true
+        cdLoja:
+          type: number
+          description: Define a loja da qual queremos ler os grupos ativos
+          example: 9999
+          required: true
+      responses:
+        200:
+          description: A chamada obteve sucesso
+          body:
+            application/json:
+              example: |
+                {
+                  "data": [{
+                    "codigo": 2,
+                    "subGrupos": [{
+                      "codigo": 1,
+                      "descricao": "REFRIGERANTE"
+                    }, {
+                      "codigo": 103,
+                      "descricao": "SUCO"
+                    }],
+                    "descricao": "BEBIDAS"
+                  }, {
+                    "codigo": 101,
+                    "subGrupos": [{
+                      "codigo": 142,
+                      "descricao": "PRATOS"
+                    }, {
+                      "codigo": 143,
+                      "descricao": "SALGADOS"
+                    }, {
+                      "codigo": 141,
+                      "descricao": "SOBREMESA"
+                    }],
+                    "descricao": "GOURMET"
+                  }, {
+                    "codigo": 102,
+                    "subGrupos": [{
+                      "codigo": 144,
+                      "descricao": "BRINDES"
+                    }, {
+                      "codigo": 145,
+                      "descricao": "KITS"
+                    }],
+                    "descricao": "KIT HABIBS"
+                  }, {
+                    "codigo": 41,
+                    "subGrupos": [{
+                      "codigo": 81,
+                      "descricao": "PREPARO"
+                    }],
+                    "descricao": "PREPARO"
+                  }, {
+                    "codigo": 4,
+                    "subGrupos": [{
+                      "codigo": 104,
+                      "descricao": "BATATA FRITA"
+                    }, {
+                      "codigo": 41,
+                      "descricao": "ESFIHAS"
+                    }, {
+                      "codigo": 106,
+                      "descricao": "FOGAZZA"
+                    }, {
+                      "codigo": 107,
+                      "descricao": "PASTEL"
+                    }],
+                    "descricao": "SALGADOS"
+                  }, {
+                    "codigo": 61,
+                    "subGrupos": [{
+                      "codigo": 101,
+                      "descricao": "LANCHES"
+                    }],
+                    "descricao": "SANDUICHES"
+                  }, {
+                    "codigo": 5,
+                    "subGrupos": [{
+                      "codigo": 108,
+                      "descricao": "DOCES"
+                    }],
+                    "descricao": "SOBREMESA"
+                  }]
+                }
+        400:
+          description: Houve um erro durante a execuÃ§Ã£o do mÃ©todo
+          body:
+            application/json:
+              example: |
+                {
+                  "errors": [{
+                    "codigo": 999,
+                    "mensagem": "ParamÃªtro [cdLoja] nÃ£o informado. Os parÃ¢metros [cdLoja] sÃ£o obrigatÃ³rios.",
+                    "p1": null
+                  }]
+                }
+  /informacoesAdicionais:
+    get:
+      description:
+        O serviÃ§o de informaÃ§Ãµes adicionais deve ser utilizado para recuperar dados complementares do produto a partir do seu cÃ³digo corporativo, de modo a popular telas de detalhe de produto.
+      queryParameters:
+        aToken:
+          type: string
+          description: Define o token para a realizaÃ§Ã£o da consulta
+          example: 47c2f98b-5e2f-42a0-85a1-b6f63c65e5db
+          required: true
+        idEmpresa:
+          type: number
+          description: Define a empresa que estÃ¡ originando o pedido, sendo Habib's[1] ou Ragazzo[2]
+          example: 1
+          required: true
+        cdLoja:
+          type: number
+          description: Define a loja relacionada
+          example: 9999
+          required: true
+        idProduto:
+          type: number
+          description: Define o cÃ³digo corporativo do produto
+          example: 25
+          required: true
+      responses:
+        200:
+          description: A chamada obteve sucesso
+          body:
+            application/json:
+              example: |
+                {
+                  "composicao": [
+                    {
+                      "peso": "1,00",
+                      "produto": "OVO",
+                      "cod": "99996",
+                      "qtd": "1,00",
+                      "unidade": "g"
+                    }
+                  ],
+                  "dependencias": [{
+                    "cod": "521",
+                    "nomeProduto": "COCA COLA LATA 350ML"
+                  }],
+                  "fotos": [
+                    {
+                      "title": "BEIRUTE HABIBS",
+                      "url": "http://172.25.220.158:8080/csiweb-habibs/adm/CarregaImagemFoto.do?id_fopr_cd_fotoprod=25"
+                    }
+                  ],
+                  "valorNutricional": {
+                    "porcoes": [
+                      {
+                        "porcao": "VALOR ENERGÃTICO",
+                        "vd": "36,00",
+                        "quantPorPorcao": "714,00",
+                        "unidade": "kcal"
+                      },
+                      {
+                        "porcao": "CARBOIDRATOS",
+                        "vd": "17,00",
+                        "quantPorPorcao": "51,00",
+                        "unidade": "g"
+                      },
+                      {
+                        "porcao": "PROTEÃNAS",
+                        "vd": "51,00",
+                        "quantPorPorcao": "39,00",
+                        "unidade": "g"
+                      },
+                      {
+                        "porcao": "GORDURAS TOTAIS",
+                        "vd": "72,00",
+                        "quantPorPorcao": "39,00",
+                        "unidade": "g"
+                      },
+                      {
+                        "porcao": "GORDURAS SATURADAS",
+                        "vd": "87,00",
+                        "quantPorPorcao": "19,00",
+                        "unidade": "g"
+                      },
+                      {
+                        "porcao": "GORDURAS TRANS",
+                        "vd": "0,01",
+                        "quantPorPorcao": "0,01",
+                        "unidade": "g"
+                      },
+                      {
+                        "porcao": "FIBRA ALIMENTAR",
+                        "vd": "18,00",
+                        "quantPorPorcao": "4,50",
+                        "unidade": "g"
+                      },
+                      {
+                        "porcao": "SODIO",
+                        "vd": "40,00",
+                        "quantPorPorcao": "948,00",
+                        "unidade": "mg"
+                      }
+                    ],
+                    "contemGluten": "false",
+                    "porcaoDe": "",
+                    "valorNutricional2": "*% VALORES DIÃRIOS COM BASE EM UMA DIETA DE 2.000 KCAL OU 8.400 KJ. SEUS VALORES DIÃRIOS PODEM SER MAIORES OU MENORES DEPENDENDO DE SUAS NECESSIDADES ENERGÃTICAS. ** VD NÃO ESTABELECIDO. CONTÃM GLÃTEN",
+                    "valorNutricional1": "PORÃÃO DE 415G (1 UNIDADE)"
+                  },
+                  "informacoesAdicionais": [
+                    {
+                      "descricaoDetalhada": "DUAS FATIAS DE PÃO SÃRIO ENVOLVEM O ROSBIFE AO PONTO JUNTAMENTE COM OVO FRITO, CHEDDAR, CREMELY, ALFACE-CRESPA, RODELAS DE TOMATE E UM TOQUE DE MAIONESE PARA DEIXAR O BEIRUTE PERFEITO",
+                      "beneficio": "MATA A FOME GASTANDO POUCO",
+                      "alergenicos": "GLUTEN",
+                      "observacao": "VOCÃ SABIA?\r\n\r\nO BEIRUTE Ã UMA CRIAÃÃO GENUINAMENTE BRASILEIRA, INSPIRADA NA CULINÃRIA ÃRABE. O NOME FOI ESCOLHIDO PARA HOMENAGEAR A CIDADE DE MESMO NOME, CAPITAL DO LÃBANO.",
+                      "atrativos": "NÃO POSSUI GORDURA TRANS"
+                    }
+                  ]
+                }
+        400:
+          description: Houve um erro durante a execuÃ§Ã£o do mÃ©todo
+          body:
+            application/json:
+              example: |
+                {
+                  "errors": [{
+                    "codigo": 999,
+                    "mensagem": "Produto nÃ£o contÃ©m informaÃ§Ãµes adicionais.",
+                    "p1": null
+                  }]
+                }
+  /listarCombinados:
+    is: [traits.Depreciado!]
+    get:
+      description:
+        O serviÃ§o de combinados deve ser utilizado para recuperar os produtos que fazem parte de um determinado combinado, como os kits e combos.
+      queryParameters:
+        aToken:
+          type: string
+          description: Define o token para a realizaÃ§Ã£o da consulta
+          example: 47c2f98b-5e2f-42a0-85a1-b6f63c65e5db
+          required: true
+        idEmpresa:
+          type: number
+          description: Define a empresa que estÃ¡ originando o pedido, sendo Habib's[1] ou Ragazzo[2]
+          example: 1
+          required: true
+        cdLoja:
+          type: number
+          description: Define a loja relacionada
+          example: 9999
+          required: true
+        idProduto:
+          type: number
+          description: Define o cÃ³digo corporativo do produto
+          example: 143
+          required: true
+      responses:
+        200:
+          description: A chamada obteve sucesso
+          body:
+            application/json:
+              example: |
+                {
+                  "produtosCombinados": {
+                    "produtos": [{
+                      "id": 68,
+                      "quantidade": 1,
+                      "codProduto": "2669",
+                      "descricao": "BATATA PEQUENA",
+                      "disponivel": true,
+                      "selecionado": false,
+                      "bloqueioTotal": false,
+                      "possuiComplementos": false,
+                      "possuiAgregados": false,
+                      "pertenceACombinado": true
+                    }],
+                    "subGrupos": [{
+                      "id": 0,
+                      "descricao": "BRINDE",
+                      "quantidade": 1,
+                      "produtos": [{
+                        "id": 127,
+                        "quantidade": 0,
+                        "codProduto": "7175",
+                        "descricao": "BRINDE - JOGO CAI N CAI",
+                        "disponivel": true,
+                        "selecionado": false,
+                        "bloqueioTotal": false,
+                        "possuiComplementos": false,
+                        "possuiAgregados": false,
+                        "pertenceACombinado": true
+                      }, {
+                        "id": 128,
+                        "quantidade": 0,
+                        "codProduto": "7173",
+                        "descricao": "BRINDE - JOGO CARA A CARA",
+                        "disponivel": true,
+                        "selecionado": false,
+                        "bloqueioTotal": false,
+                        "possuiComplementos": false,
+                        "possuiAgregados": false,
+                        "pertenceACombinado": true
+                      }, {
+                        "id": 129,
+                        "quantidade": 0,
+                        "codProduto": "7176",
+                        "descricao": "BRINDE - JOGO PULA MACACO",
+                        "disponivel": true,
+                        "selecionado": false,
+                        "bloqueioTotal": false,
+                        "possuiComplementos": false,
+                        "possuiAgregados": false,
+                        "pertenceACombinado": true
+                      }, {
+                        "id": 130,
+                        "quantidade": 0,
+                        "codProduto": "7174",
+                        "descricao": "BRINDE - JOGO TAPA CERTO PK",
+                        "disponivel": true,
+                        "selecionado": false,
+                        "bloqueioTotal": false,
+                        "possuiComplementos": false,
+                        "possuiAgregados": false,
+                        "pertenceACombinado": true
+                      }],
+                      "disponivel": true,
+                      "somaQuantidadeProdutos": 0
+                    }, {
+                      "id": 0,
+                      "descricao": "ESFIHAS",
+                      "quantidade": 2,
+                      "produtos": [{
+                        "id": 132,
+                        "quantidade": 0,
+                        "codProduto": "47",
+                        "descricao": "BIB'SFIHA DE ESPINAFRE",
+                        "disponivel": true,
+                        "selecionado": false,
+                        "bloqueioTotal": false,
+                        "possuiComplementos": false,
+                        "possuiAgregados": false,
+                        "pertenceACombinado": true
+                      }, {
+                        "id": 133,
+                        "quantidade": 0,
+                        "codProduto": "200",
+                        "descricao": "BIB'SFIHA DE FRANGO",
+                        "disponivel": true,
+                        "selecionado": false,
+                        "bloqueioTotal": false,
+                        "possuiComplementos": false,
+                        "possuiAgregados": false,
+                        "pertenceACombinado": true
+                      }, {
+                        "id": 21,
+                        "quantidade": 0,
+                        "codProduto": "1",
+                        "descricao": "BIBSFIHA DE CARNE",
+                        "disponivel": true,
+                        "selecionado": false,
+                        "bloqueioTotal": false,
+                        "possuiComplementos": false,
+                        "possuiAgregados": true,
+                        "pertenceACombinado": true,
+                        "agregados": [{
+                          "id": 41,
+                          "descricao": "ENVIAR LIMÃO",
+                          "codigoCorporativo": "7878",
+                          "selecionado": false,
+                          "quantidade": 0
+                        }]
+                      }],
+                      "disponivel": true,
+                      "somaQuantidadeProdutos": 0
+                    }, {
+                      "id": 0,
+                      "descricao": "SUCO",
+                      "quantidade": 1,
+                      "produtos": [{
+                        "id": 66,
+                        "quantidade": 0,
+                        "codProduto": "4878",
+                        "descricao": "SUCO ABACAXI 500ML + 500ML (GRATIS)",
+                        "disponivel": true,
+                        "selecionado": false,
+                        "bloqueioTotal": false,
+                        "possuiComplementos": false,
+                        "possuiAgregados": false,
+                        "pertenceACombinado": true
+                      }, {
+                        "id": 142,
+                        "quantidade": 0,
+                        "codProduto": "1558",
+                        "descricao": "SUCO LARANJA 500ML + 500ML (GRATIS)",
+                        "disponivel": true,
+                        "selecionado": false,
+                        "bloqueioTotal": false,
+                        "possuiComplementos": false,
+                        "possuiAgregados": false,
+                        "pertenceACombinado": true
+                      }],
+                      "disponivel": true,
+                      "somaQuantidadeProdutos": 0
+                    }]
+                  }
+                }
+        400:
+          description: Houve um erro durante a execuÃ§Ã£o do mÃ©todo
+          body:
+            application/json:
+              example: |
+                {
+                  "errors": [{
+                    "codigo": 999,
+                    "mensagem": "Ao menos ums dos seguintes parÃ¢metros [idProduto, cdProduto] deve informado.",
+                    "p1": null
+                  }]
+                }
+  /listarComplementos:
+    is: [traits.Depreciado!]
+    get:
+      description:
+        O serviÃ§o de complementos deve ser utilizado para recuperar todos os complementos compatÃ­vies com o produto, tarifados ou nÃ£o, como bacon, ovo, etc.
+      queryParameters:
+        aToken:
+          type: string
+          description: Define o token para a realizaÃ§Ã£o da consulta
+          example: 47c2f98b-5e2f-42a0-85a1-b6f63c65e5db
+          required: true
+        idEmpresa:
+          type: number
+          description: Define a empresa que estÃ¡ originando o pedido, sendo Habib's[1] ou Ragazzo[2]
+          example: 1
+          required: true
+        cdLoja:
+          type: number
+          description: Define a loja relacionada
+          example: 9999
+          required: true
+        idProduto:
+          type: number
+          description: Define o ID do produto
+          example: 61
+          required: true
+      responses:
+        200:
+          description: A chamada obteve sucesso
+          body:
+            application/json:
+              example: |
+                {
+                  "complementos": [
+                    {
+                      "id": 41,
+                      "tipo": "COM",
+                      "idProduto": 143,
+                      "idComplementoProduto": 79,
+                      "descricaoProdutoComplemento": "BACON EXTRA",
+                      "preco": 3.5,
+                      "valorTotal": 0,
+                      "selecionado": false,
+                      "quantidade": 0,
+                      "descricao": "COM BACON EXTRA"
+                    }
+                  ]
+                }
+        400:
+          description: Houve um erro durante a execuÃ§Ã£o do mÃ©todo
+          body:
+            application/json:
+              example: |
+                {
+                  "errors": [
+                    {
+                      "codigo": 999,
+                      "mensagem": "ParamÃªtro [idProduto] nÃ£o informado. Os parÃ¢metros [idEmpresa, idProduto] sÃ£o obrigatÃ³rios.",
+                      "p1": null
+                    }
+                  ]
+                }
+/promocoes:
+  get:
+    description:
+      O serviÃ§o de promoÃ§Ãµes deve ser utilizado para recuperar todos as promoÃ§Ãµes ativas para a loja no momento da consulta.
+    queryParameters:
+      aToken:
+        type: string
+        description: Define o token para a realizaÃ§Ã£o da consulta
+        example: 47c2f98b-5e2f-42a0-85a1-b6f63c65e5db
+        required: true
+      idEmpresa:
+        type: number
+        description: Define a empresa que estÃ¡ originando o pedido, sendo Habib's[1] ou Ragazzo[2]
+        example: 1
+        required: true
+      cdLoja:
+        type: number
+        description: Define a loja relacionada
+        example: 9999
+        required: true
+    responses:
+      200:
+        description: A chamada obteve sucesso
+        body:
+          application/json:
+            example: |
+              {
+                "promocoes": [{
+                  "produtos": [{
+                    "id": 1,
+                    "idProduto": 161,
+                    "produto": {
+                      "id": 161,
+                      "idProduto": 161,
+                      "codigoProduto": "108",
+                      "descricao": "PASTEL DE BELEM",
+                      "preco": 2.8,
+                      "disponivel": false,
+                      "possuiPromocao": false,
+                      "combinado": false,
+                      "possuiAgregados": false,
+                      "possuiComplementos": false,
+                      "idGrupo": 5,
+                      "idSubGrupo": 108,
+                      "idTipoProduto": 3,
+                      "descricaoSubGrupo": "DOCES"
+                    },
+                    "valorPromo": 3.9,
+                    "quantidade": null,
+                    "indicadorSubGrupoProduto": "P",
+                    "idSubGrupo": 108
+                  }],
+                  "id": 1,
+                  "codigoCorporativo": "1",
+                  "descricao": "PASTEL DE BELEM EM DOBRO",
+                  "mecanica": "COMPRE PASTEL DE BELEM E RECEBERÃ EM DOBRO. \r\nPROMOÃÃO VÃLIDA PARA TODAS AS LOJAS, TODOS OS DIAS DA SEMANA E POR TEMPO INDETERMINADO. SUJEITO A DISPONIBILIDADE DE ESTOQUE.",
+                  "tipo": "DOBRAR_QUANTIDADE",
+                  "prioridade": 1,
+                  "quantidadeFixa": 0,
+                  "quantidadeTotal": 99999,
+                  "dataInicioValidade": 1462127329000,
+                  "valorTotal": 0,
+                  "valorTaxaEntregaPrincipal": 0,
+                  "valorTaxaEntregaAdicional": 0,
+                  "afetaTaxaEntregaPrincipal": false,
+                  "afetaTaxaEntregaAdicional": false,
+                  "permiteAlterarTaxaEntrega": false,
+                  "idOrigensPedido": ";3;1;4;2;"
+                }]
+              }
+      400:
+        description: Houve um erro durante a execuÃ§Ã£o do mÃ©todo
+        body:
+          application/json:
+            example: |
+              {
+                "errors": [
+                  {
+                    "codigo": 999,
+                    "mensagem": "NÃ£o foi possÃ­vel encontrar a loja \n",
+                    "p1": null
+                  }
+                ]
+              }
+/pedidos:
+  /iniciarPedido:
+    post:
+      headers:
+        Content-Type:
+          example: application/json
+      description:
+        O serviÃ§o de criaÃ§Ã£o de pedido deve ser utilizado antes da primeira alteraÃ§Ã£o na bandeja. Este mÃ©todo retorna, dentro outras informaÃ§Ãµes, o ID que deve ser utilizado por todos os mÃ©todos que compoem o endpoint de pedidos. O Body somente deve ser enviado caso seja um pedido em galera, bem como o retorno Ã© alterado para aquele aqui definido dentro do schema. O e-mail de cada integrante da galera Ã© opcional. No mesmo pedido nÃ£o podem haver dois com o mesmo nome nem com o mesmo CPF nem o mesmo e-mail. O parÃ¢metro "chave" sÃ³ deve ser utilizado para adicionar outra pessoa Ã  galera.
+      queryParameters:
+        aToken:
+          type: string
+          description: Define o token para a realizaÃ§Ã£o da consulta
+          example: 47c2f98b-5e2f-42a0-85a1-b6f63c65e5db
+          required: true
+        idEmpresa:
+          type: number
+          description: Define a empresa que estÃ¡ originando o pedido, sendo Habib's[1] ou Ragazzo[2]
+          example: 1
+          required: true
+        idOrigemPedido:
+          type: number
+          description:  Define o dispositivo que estÃ¡ originando o pedido, podendo sendo Desktop[2], iPhone[4], Android[3]
+          example: 2
+          required: true
+      body:
+        application/json:
+          example: |
+            {
+              "galera": [{
+                "nome": "John Doe",
+                "cpfCnpj": "33863144491"
+              },{
+                "nome": "Martha Smith",
+                "cpfCnpj": "67104713573",
+                "email": "martha@gmail.com"
+              }],
+              "chave": "2ef0c72f7e"
+            }
+      responses:
+        200:
+          description: A chamada obteve sucesso
+          body:
+            application/json:
+              example: |
+                {
+                  "pedido": {
+                    "id": 769,
+                    "idEmpresa": 1,
+                    "idOrigemPedido": 2,
+                    "origemPedido": {
+                      "id": 2,
+                      "descricao": "WEB",
+                      "telefoneObrigatorio": false
+                    },
+                    "idFuncionario": 2721,
+                    "situacao": 41,
+                    "numero": 769,
+                    "dataCriacao": 1465492547987,
+                    "valorTotalItens": 0,
+                    "valorTotalPedido": 0,
+                    "elementosAgregadosNoPedido": true,
+                    "valorEntrega": 0,
+                    "tipoPedido": "A",
+                    "byNight": "N",
+                    "statusRecebimento": "41",
+                    "valorPago": 0
+                  }
+                }
+              schema: |
+                {
+                  "pedidos": [{
+                    "id": 1175,
+                    "idEmpresa": 1,
+                    "idCliente": 574689,
+                    "idOrigemPedido": 2,
+                    "origemPedido": {
+                      "id": 2,
+                      "descricao": "WEB",
+                      "telefoneObrigatorio": false
+                    },
+                    "idFuncionario": 2721,
+                    "situacao": 41,
+                    "situacaoDescricao": "N/A",
+                    "numero": 1175,
+                    "dataCriacao": 1467399948000,
+                    "valorTotalItens": 0,
+                    "valorTotalPedido": 0,
+                    "cpfCnpj": "33863144491",
+                    "elementosAgregadosNoPedido": false,
+                    "valorEntrega": 0,
+                    "tipoPedido": "N",
+                    "byNight": "N",
+                    "statusRecebimento": "41",
+                    "enderecoEntrega": {
+                      "idCliente": 574689,
+                      "principal": false,
+                      "valid": false,
+                      "ativo": true,
+                      "novoValid": false
+                    },
+                    "valorPago": 0
+                  }, {
+                    "id": 1176,
+                    "idEmpresa": 1,
+                    "idCliente": 574709,
+                    "idOrigemPedido": 2,
+                    "origemPedido": {
+                      "id": 2,
+                      "descricao": "WEB",
+                      "telefoneObrigatorio": false
+                    },
+                    "idFuncionario": 2721,
+                    "situacao": 41,
+                    "situacaoDescricao": "N/A",
+                    "numero": 1176,
+                    "dataCriacao": 1467399948000,
+                    "valorTotalItens": 0,
+                    "valorTotalPedido": 0,
+                    "cpfCnpj": "67104713573",
+                    "elementosAgregadosNoPedido": false,
+                    "valorEntrega": 0,
+                    "tipoPedido": "N",
+                    "byNight": "N",
+                    "statusRecebimento": "41",
+                    "enderecoEntrega": {
+                      "idCliente": 574709,
+                      "principal": false,
+                      "valid": false,
+                      "ativo": true,
+                      "novoValid": false
+                    },
+                    "valorPago": 0
+                  }],
+                  "chave": "2ef0b6db67"
+                }
+        400:
+          description: Houve um erro durante a execuÃ§Ã£o do mÃ©todo
+          body:
+            application/json:
+              example: |
+                {
+                  "errors": [
+                    {
+                      "codigo": 999,
+                      "mensagem": "Origem do pedido obriga que seja informado um telefone vÃ¡lido!",
+                      "p1": null
+                    }
+                  ]
+                }
+  /confirmarEndereco:
+    post:
+      headers:
+        Content-Type:
+          example: application/json
+      description:
+        O serviÃ§o de confirmaÃ§Ã£o de endereÃ§o Ã© a segunda validaÃ§Ã£o do sistema quanto a codLoja vs cidadeLoja e Ã© imprescindÃ­vel ao processo de compra.
+      queryParameters:
+        aToken:
+          type: string
+          description: Define o token para a realizaÃ§Ã£o da consulta
+          example: 47c2f98b-5e2f-42a0-85a1-b6f63c65e5db
+          required: true
+        idEmpresa:
+          type: number
+          description: Define a empresa que estÃ¡ originando o pedido, sendo Habib's[1] ou Ragazzo[2]
+          example: 1
+          required: true
+        idPedido:
+          type: number
+          description:  Define o nÃºmero do pedido que desejamos confirmar a primeira etapa do endereÃ§o com base na consulta de loja
+          example: 601
+          required: true
+        idCidade:
+          type: number
+          description:  Define o id da cidade adquirido pela consulta de loja
+          example: 37
+          required: true
+      body:
+        application/json:
+          example: |
+            {
+              "logradouro": "RUA DO PEDIDO TESTE  HAB-RAG (FULL)",
+              "bairro": "JARDIM VOXLINE",
+              "cidade": "SAO PAULO",
+              "uf": "SP",
+              "numero": "2",
+              "cep": "00000998",
+              "quadra": "",
+              "noSeg": "SEGVOXTESTE003"
+            }
+      responses:
+        200:
+          description: A chamada obteve sucesso
+          body:
+            application/json:
+              example: |
+                {
+                  "endereco": {
+                    "idEndereco": 663382,
+                    "noSeg": "SEGVOX00000033"
+                  }
+                }
+        400:
+          description: Houve um erro durante a execuÃ§Ã£o do mÃ©todo
+          body:
+            application/json:
+              example: |
+                {
+                  "errors": [{
+                    "codigo": 999,
+                    "mensagem": "ParamÃªtro [idPedido] nÃ£o informado. Os parÃ¢metros [idEmpresa, idPedido, idCidade] sÃ£o obrigatÃ³rios.",
+                    "p1": null
+                  }]
+                }
+  /confirmarLojaPedido:
+    post:
+      headers:
+        Content-Type:
+          example: application/json
+      description:
+        O serviÃ§o de confirmaÃ§Ã£o loja de pedido Ã© o Ãºltmo step da criaÃ§Ã£o do pedido e garante o relacionamento do pedido com a loja
+      queryParameters:
+        aToken:
+          type: string
+          description: Define o token para a realizaÃ§Ã£o da consulta
+          example: 47c2f98b-5e2f-42a0-85a1-b6f63c65e5db
+          required: true
+        idEmpresa:
+          type: number
+          description: Define a empresa que estÃ¡ originando o pedido, sendo Habib's[1] ou Ragazzo[2]
+          example: 1
+          required: true
+        idPedido:
+          type: number
+          description:  Define o nÃºmero do pedido que desejamos confirmar a primeira etapa do endereÃ§o com base na consulta de loja
+          example: 601
+          required: true
+      responses:
+        200:
+          description: A chamada obteve sucesso
+          body:
+            application/json:
+              example: |
+                {
+                  "pedido": {
+                    "id": 398,
+                    "idEmpresa": 1,
+                    "idLojaAtendimento": 21,
+                    "idOrigemPedido": 2,
+                    "origemPedido": {
+                      "id": 2,
+                      "descricao": "WEB",
+                      "telefoneObrigatorio": true
+                    },
+                    "idFuncionario": 2721,
+                    "situacao": 10,
+                    "situacaoDescricao": "N/A",
+                    "numero": 398,
+                    "dataCriacao": 1463167281000,
+                    "valorTotalItens": 0,
+                    "valorTotalPedido": 0,
+                    "elementosAgregadosNoPedido": false,
+                    "valorEntrega": 0,
+                    "tipoPedido": "A",
+                    "cupomFiscal": "S",
+                    "byNight": "N",
+                    "funcionarioHabibs": "N",
+                    "noSeg": "SEGVOX00000033",
+                    "statusRecebimento": "10",
+                    "telefoneAtendimento": {
+                      "ddd": 11,
+                      "numero": 11111111,
+                      "principal": "N",
+                      "valid": true
+                    },
+                    "enderecoEntrega": {
+                      "logradouro": "RUA DO PEDIDO HABIBS (FULL)",
+                      "numero": "1",
+                      "bairro": "JARDIM VOXLINE",
+                      "cidade": "SAO PAULO",
+                      "uf": "SP",
+                      "cep": "00000111",
+                      "principal": false,
+                      "noSeg": "SEGVOX00000033",
+                      "valid": true,
+                      "ativo": true,
+                      "novoValid": true
+                    },
+                    "valorPago": 0,
+                    "loja": {
+                      "id": 21,
+                      "descricao": "VOXLINE (HABIBS 1)",
+                      "codCorporativo": "9999",
+                      "possuiDelivery": true,
+                      "possuiDeliveryByNight": true,
+                      "tranferenciaAutomatica": false,
+                      "ativaParaReceberPedidos": true,
+                      "bloqueadaPelaCentral": false,
+                      "permiteTranferenciaOutraLoja": false,
+                      "inativa": false,
+                      "idHorarioVerao": 1,
+                      "idHorarioDelivery": 1,
+                      "idHorarioDeliveryByNight": 2,
+                      "valorVeiculoPrincial": 7.9,
+                      "valorVeiculoAdicional": 4.5,
+                      "valorVeiculoPrincialByNight": 9,
+                      "valorVeiculoAdicionalByNight": 5,
+                      "cnpj": "57.459.201/0001-79",
+                      "idTipoEmpresa": 1,
+                      "idRegiaoMaster": 1,
+                      "idTipoAdministracao": 1,
+                      "idHorarioFuncionamento": 3,
+                      "codPDV": "",
+                      "lojaEstaBloqueadaParaPedidos": false
+                    }
+                  }
+                }
+        400:
+          description: Houve um erro durante a execuÃ§Ã£o do mÃ©todo
+          body:
+            application/json:
+              example: |
+                {
+                  "errors": [{
+                    "codigo": 999,
+                    "mensagem": "ParamÃªtro [idPedido] nÃ£o informado. Os parÃ¢metros [idPedido] sÃ£o obrigatÃ³rios.",
+                    "p1": null
+                  }]
+                }
+  /alterarTempoAtendimento:
+    post:
+      description:
+        Altera o pedido para o status de pedido agendado e define a hora da entrega. Deve ser chamado antes do "/finalizarPedido"
+      queryParameters:
+        aToken:
+          type: string
+          description: Define o token para a realizaÃ§Ã£o da consulta
+          example: 47c2f98b-5e2f-42a0-85a1-b6f63c65e5db
+          required: true
+        idEmpresa:
+          type: number
+          description: Define a empresa que originou os pedidos, sendo Habib's[1] ou Ragazzo[2]
+          example: 1
+          required: true
+        idPedido:
+          type: number
+          description:  Define o nÃºmero do pedido que desejamos confirmar a primeira etapa do endereÃ§o com base na consulta de loja
+          example: 601
+          required: true
+        horaAgendamento:
+          type: string
+          description: Define a hora que o pedido deve ser enviado
+          example: 22:00
+          required: true
+      responses:
+        200:
+          description: A chamada obteve sucesso
+          body:
+            application/json:
+              example: |
+                {
+                  "pedido": {
+                    "descricaoOrigem": "WEB",
+                    "tempoAtendimento": null,
+                    "agendamento": 1491964200,
+                    "numero": 1248,
+                    "byNight": "N",
+                    "id": 1248,
+                    "loja": {
+                      "id": 21,
+                      "descricao": "VOXLINE (HABIBS 1)",
+                      "razaoSocial": "VOXLINE (HABIBS 1)",
+                      "codCorporativo": "9999",
+                      "possuiDelivery": true,
+                      "possuiDeliveryByNight": true,
+                      "tranferenciaAutomatica": false,
+                      "ativaParaReceberPedidos": true,
+                      "bloqueadaPelaCentral": false,
+                      "permiteTranferenciaOutraLoja": false,
+                      "inativa": false,
+                      "idHorarioVerao": 1,
+                      "idHorarioDelivery": 1,
+                      "idHorarioDeliveryByNight": 2,
+                      "valorVeiculoPrincial": 7.9,
+                      "valorVeiculoAdicional": 4.5,
+                      "valorVeiculoPrincialByNight": 9,
+                      "valorVeiculoAdicionalByNight": 5,
+                      "cnpj": "57.459.201/0001-79",
+                      "idTipoEmpresa": 1,
+                      "idRegiaoMaster": 41,
+                      "idTipoAdministracao": 41,
+                      "idHorarioFuncionamento": 3,
+                      "codPDV": "",
+                      "lojaEstaBloqueadaParaPedidos": false
+                    },
+                    "cliente": {
+                      "id": 574689,
+                      "nome": "FIRMINDOS ANASTACIO",
+                      "cpfCnpj": "33863144491",
+                      "dataCadastramento": 1467397672000,
+                      "dadosComplementares": {
+                        "idCliente": 574689
+                      },
+                      "endereco": {
+                        "idCliente": 574689,
+                        "id": 663642,
+                        "tipoLogradouro": {},
+                        "logradouro": "RUA DO PEDIDO HABIBS (FULL)",
+                        "numero": "1",
+                        "bairro": "JARDIM VOXLINE",
+                        "cidade": "SAO PAULO",
+                        "uf": "SP",
+                        "pais": "SP",
+                        "cep": "00000111",
+                        "quadraEsquerda": "1",
+                        "quadraDireita": "10",
+                        "principal": true,
+                        "dadosComplementares": {
+                          "id": 381,
+                          "idCliente": 574689,
+                          "idEndereco": 663642,
+                          "quadra": "1",
+                          "byNight": false,
+                          "funcionario": false,
+                          "inativo": false
+                        },
+                        "noSeg": "SEGVOX00000033",
+                        "numeroQuadrante": "X3",
+                        "letraQuadrante": "Y3",
+                        "noDenominac": "RUA DO PEDIDO HABIBS (DENOMINAC)",
+                        "exclusivo": false,
+                        "valid": true,
+                        "ativo": true,
+                        "novoValid": true
+                      },
+                      "tipoPublico": {
+                        "idCliente": 574689,
+                        "id": 1,
+                        "descricao": "CLIENTE",
+                        "principal": "S"
+                      }
+                    },
+                    "tempoAlterado": null,
+                    "valorTotal": 5.93,
+                    "agendamento": null,
+                    "lojacodigoCorporativo": "9999",
+                    "situacao": "EM ELABORAÃÃO",
+                    "valorEntrega": 3.95,
+                    "valorTotalItens": 1.98
+                  },
+                  "itens": [{
+                    "id": 2182,
+                    "quantidade": 1,
+                    "preco": 0.99,
+                    "idPedido": 1248,
+                    "valorTotal": 0.99,
+                    "idProduto": 21,
+                    "idItemPedido": 2182,
+                    "produto": {
+                      "id": 21,
+                      "idProduto": 21,
+                      "codigoProduto": "1",
+                      "descricao": "BIBSFIHA DE CARNE",
+                      "preco": 1.88,
+                      "disponivel": false,
+                      "possuiPromocao": false,
+                      "combinado": false,
+                      "possuiAgregados": false,
+                      "possuiComplementos": false,
+                      "idGrupo": 241,
+                      "idSubGrupo": 282,
+                      "idTipoProduto": 3,
+                      "descricaoSubGrupo": "TRADICIONAIS"
+                    },
+                    "combinados": {},
+                    "agregados": [{
+                      "id": 41,
+                      "descricao": "ENVIAR LIMÃO",
+                      "codigoCorporativo": "7878",
+                      "selecionado": false,
+                      "quantidade": 0
+                    }],
+                    "total": 0.99,
+                    "possuiPromocoesProduto": false,
+                    "produtoPossuiAgregados": true,
+                    "totalComplementos": 0,
+                    "totalItens": 0.99
+                  }]
+                }
+        400:
+          description: Houve um erro durante a execuÃ§Ã£o do mÃ©todo
+          body:
+            application/json:
+              example: |
+                {
+                  "errors": [{
+                    "codigo": 999,
+                    "mensagem": "Tempo de atendimento nÃ£o respeita o tempo mÃ­nimo para o valor do pedido que Ã© de 28 minutos",
+                    "p1": null
+                  }]
+                }
+  /ultimosPedidos:
+    get:
+      description:
+        O serviÃ§o de Ãºltimos pedidos retorna "x" pedidos de todos os pedidos do cliente informado em order cronolÃ³gica reversa. O parÃ¢metro do nÃºmero de pedidos retornado Ã© gerenciado pela plataforma.
+      queryParameters:
+        aToken:
+          type: string
+          description: Define o token para a realizaÃ§Ã£o da consulta
+          example: 47c2f98b-5e2f-42a0-85a1-b6f63c65e5db
+          required: true
+        idEmpresa:
+          type: number
+          description: Define a empresa que originou os pedidos, sendo Habib's[1] ou Ragazzo[2]
+          example: 1
+          required: true
+        idCliente:
+          type: number
+          description:  Define o id do cliente para o qual desejamos retornar os Ãºltimos pedidos.
+          example: 574469
+          required: true
+      responses:
+        200:
+          description: A chamada obteve sucesso
+          body:
+            application/json:
+              example: |
+                {
+                  "ultimosPedidos": [{
+                    "id": 1096,
+                    "idEmpresa": 1,
+                    "responsavelCancelamentoPedido": "U",
+                    "idLojaAtendimento": 21,
+                    "idCliente": 574469,
+                    "cliente": {
+                      "id": 574469,
+                      "nome": "DELCÃDIO DO AMARAL",
+                      "cpfCnpj": "23898054772",
+                      "dataNascimento": 755661600000,
+                      "dataAlteracao": 1466536970000,
+                      "sexo": "M",
+                      "dadosComplementares": {
+                        "idCliente": 574469,
+                        "dataNascimento": 755661600000,
+                        "idade": 22,
+                        "sexo": "M"
+                      },
+                      "email": {
+                        "idCliente": 574469,
+                        "id": 1001250,
+                        "email": "DELCIDIO@AMARAL.COM.BR",
+                        "principal": true
+                      },
+                      "endereco": {
+                        "idCliente": 574469,
+                        "id": 663422,
+                        "tipoLogradouro": {},
+                        "logradouro": "RUA DO PEDIDO HABIBS (FULL)",
+                        "numero": "1",
+                        "bairro": "JARDIM VOXLINE",
+                        "cidade": "SAO PAULO",
+                        "uf": "SP",
+                        "pais": "SP",
+                        "cep": "00000111",
+                        "quadraEsquerda": "1",
+                        "quadraDireita": "10",
+                        "tipo": {
+                          "id": 3,
+                          "descricao": "OUTROS"
+                        },
+                        "principal": true,
+                        "dadosComplementares": {
+                          "id": 181,
+                          "idCliente": 574469,
+                          "idEndereco": 663422,
+                          "segmento": "SEGVOX00000033",
+                          "nomeEdificio": "tower 3",
+                          "tipoComplemento": {
+                            "id": 47,
+                            "descricao": "HOTEL"
+                          },
+                          "nomeEmpresa": "hilton",
+                          "numeroPortaria": "37",
+                          "conjunto": "3",
+                          "andar": "2",
+                          "bloco": "3",
+                          "setorDepartamentoQuarto": "financeiro",
+                          "byNight": false,
+                          "funcionario": true,
+                          "inativo": false,
+                          "referencia": "extra hipermercado",
+                          "complemento": "a"
+                        },
+                        "noSeg": "SEGVOX00000033",
+                        "numeroQuadrante": "X3",
+                        "letraQuadrante": "Y3",
+                        "referencia": "extra hipermercado",
+                        "exclusivo": false,
+                        "valid": true,
+                        "ativo": true,
+                        "novoValid": true
+                      },
+                      "telefone": {
+                        "idCliente": 574469,
+                        "id": 1001102,
+                        "ddd": 11,
+                        "numero": 55252525,
+                        "principal": "S",
+                        "tipo": {
+                          "id": 1,
+                          "descricao": "RESIDENCIAL",
+                          "ramalObrigatorio": false
+                        },
+                        "idEndereco": 663583,
+                        "dataInclusao": 1463677749000,
+                        "dataAlteracao": 1466536963000,
+                        "valid": true
+                      },
+                      "outrosTelefones": [{
+                        "idCliente": 574469,
+                        "id": 1001252,
+                        "ddd": 11,
+                        "numero": 11112121,
+                        "ramal": "123",
+                        "principal": "N",
+                        "tipo": {
+                          "id": 1,
+                          "descricao": "RESIDENCIAL",
+                          "ramalObrigatorio": false
+                        },
+                        "dataInclusao": 1465592876000,
+                        "dataAlteracao": 1466536970000,
+                        "valid": true
+                      }, {
+                        "idCliente": 574469,
+                        "id": 1001103,
+                        "ddd": 11,
+                        "numero": 99999999,
+                        "ramal": "999999",
+                        "principal": "N",
+                        "tipo": {
+                          "id": 3,
+                          "descricao": "CELULAR",
+                          "ramalObrigatorio": false
+                        },
+                        "dataInclusao": 1463679514000,
+                        "dataAlteracao": 1465592876000,
+                        "valid": true
+                      }],
+                      "tipoPublico": {
+                        "idCliente": 574469,
+                        "id": 22,
+                        "descricao": "PADRÃO",
+                        "principal": "S"
+                      }
+                    },
+                    "idOrigemPedido": 1,
+                    "origemPedido": {
+                      "id": 1,
+                      "descricao": "CALLCENTER",
+                      "telefoneObrigatorio": true
+                    },
+                    "idFuncionario": 2701,
+                    "situacao": 99,
+                    "situacaoDescricao": "CANCELADO",
+                    "numero": 1096,
+                    "dataCriacao": 1466174377000,
+                    "dataFechamento": 1466174524000,
+                    "valorTotalItens": 7.89,
+                    "valorTotalPedido": 15.79,
+                    "cpfCnpj": "23898054772",
+                    "idSubmotivoCancelamento": 21,
+                    "itens": [{
+                      "id": 1342,
+                      "quantidade": 1,
+                      "preco": 0.99,
+                      "idPedido": 1096,
+                      "valorTotal": 0.99,
+                      "idProduto": 21,
+                      "idItemPedido": 1342,
+                      "produto": {
+                        "id": 21,
+                        "idProduto": 21,
+                        "codigoProduto": "1",
+                        "descricao": "BIBSFIHA DE CARNE",
+                        "preco": 1.88,
+                        "disponivel": false,
+                        "possuiPromocao": false,
+                        "combinado": false,
+                        "possuiAgregados": false,
+                        "possuiComplementos": false,
+                        "idGrupo": 241,
+                        "idSubGrupo": 282,
+                        "idTipoProduto": 3,
+                        "descricaoSubGrupo": "TRADICIONAIS"
+                      },
+                      "promocao": {
+                        "produtos": [{
+                          "id": 35,
+                          "idProduto": 21,
+                          "produto": {
+                            "id": 21,
+                            "idProduto": 21,
+                            "codigoProduto": "1",
+                            "descricao": "BIBSFIHA DE CARNE",
+                            "preco": 1.88,
+                            "disponivel": false,
+                            "possuiPromocao": false,
+                            "combinado": false,
+                            "possuiAgregados": false,
+                            "possuiComplementos": false,
+                            "idGrupo": 241,
+                            "idSubGrupo": 282,
+                            "idTipoProduto": 3,
+                            "descricaoSubGrupo": "TRADICIONAIS"
+                          },
+                          "valorPromo": 0,
+                          "quantidade": null,
+                          "indicadorSubGrupoProduto": "P",
+                          "idSubGrupo": 41
+                        }],
+                        "id": 24,
+                        "codigoCorporativo": "201",
+                        "descricao": "COCA 2L E ESFIHA DE CARNE DOBRO",
+                        "mecanica": "NA COMPRA DE UMA COCA-COLA 2L O CLIENTE TEM DIREITO A COMPRAR BIBSFIHA DE CARNE EM DOBRO",
+                        "tipo": "DOBRAR_QUANTIDADE_PRODUTO_DIFERENTE",
+                        "prioridade": 1,
+                        "quantidadeFixa": 1,
+                        "quantidadeTotal": 1,
+                        "dataInicioValidade": 1451664194000,
+                        "valorTotal": 0,
+                        "valorTaxaEntregaPrincipal": 0,
+                        "valorTaxaEntregaAdicional": 0,
+                        "afetaTaxaEntregaPrincipal": false,
+                        "afetaTaxaEntregaAdicional": false,
+                        "permiteAlterarTaxaEntrega": false,
+                        "idOrigensPedido": ";1;"
+                      },
+                      "total": 0.99,
+                      "possuiPromocoesProduto": true,
+                      "produtoPossuiAgregados": true,
+                      "totalComplementos": 0,
+                      "totalItens": 0.99
+                    }, {
+                      "id": 1343,
+                      "quantidade": 1,
+                      "preco": 6.9,
+                      "idPedido": 1096,
+                      "valorTotal": 6.9,
+                      "idProduto": 62,
+                      "idItemPedido": 1343,
+                      "produto": {
+                        "id": 62,
+                        "idProduto": 62,
+                        "codigoProduto": "531",
+                        "descricao": "COCA COLA 2L",
+                        "preco": 6.9,
+                        "disponivel": false,
+                        "possuiPromocao": false,
+                        "combinado": false,
+                        "possuiAgregados": false,
+                        "possuiComplementos": false,
+                        "idGrupo": 2,
+                        "idSubGrupo": 1,
+                        "idTipoProduto": 3,
+                        "descricaoSubGrupo": "REFRIGERANTE"
+                      },
+                      "total": 6.9,
+                      "possuiPromocoesProduto": true,
+                      "produtoPossuiAgregados": false,
+                      "totalComplementos": 0,
+                      "totalItens": 6.9
+                    }],
+                    "elementosAgregadosNoPedido": false,
+                    "valorVeiculoPrincipal": 7.9,
+                    "valorVeiculoAdicional": 4.5,
+                    "valorEntrega": 7.9,
+                    "quadraDireita": "10",
+                    "quadraEsquerda": "1",
+                    "tpComplemento": "HOTEL",
+                    "nomeEdificio": "tower 3",
+                    "numeroPortaria": "37",
+                    "conjunto": "3",
+                    "andar": "2",
+                    "bloco": "3",
+                    "numeroQuadrante": "X3",
+                    "letraQuadrante": "Y3",
+                    "detalhe": "financeiro",
+                    "tempoAtendimento": 28,
+                    "tipoPedido": "A",
+                    "classificacao": "N",
+                    "cupomFiscal": "S",
+                    "byNight": "N",
+                    "funcionarioHabibs": "S",
+                    "idTipoComunicacao": 1,
+                    "noSeg": "SEGVOX00000033",
+                    "statusRecebimento": "99",
+                    "telefoneAtendimento": {
+                      "idCliente": 574469,
+                      "ddd": 11,
+                      "numero": 55252525,
+                      "principal": "N",
+                      "tipo": {
+                        "id": 1,
+                        "ramalObrigatorio": false
+                      },
+                      "valid": true
+                    },
+                    "enderecoEntrega": {
+                      "idCliente": 574469,
+                      "logradouro": "RUA DO PEDIDO HABIBS (FULL)",
+                      "numero": "1",
+                      "bairro": "JARDIM VOXLINE",
+                      "cidade": "SAO PAULO",
+                      "uf": "SP",
+                      "pais": "SP",
+                      "cep": "00000111",
+                      "quadraEsquerda": "1",
+                      "quadraDireita": "10",
+                      "tipo": {
+                        "id": 3
+                      },
+                      "principal": false,
+                      "noSeg": "SEGVOX00000033",
+                      "numeroQuadrante": "X3",
+                      "letraQuadrante": "Y3",
+                      "referencia": "extra hipermercado",
+                      "exclusivo": false,
+                      "valid": true,
+                      "ativo": true,
+                      "novoValid": true
+                    },
+                    "referencia": "extra hipermercado",
+                    "valorPago": 0,
+                    "loja": {
+                      "id": 21,
+                      "descricao": "VOXLINE (HABIBS 1)",
+                      "razaoSocial": "VOXLINE (HABIBS 1)",
+                      "codCorporativo": "9999",
+                      "possuiDelivery": true,
+                      "possuiDeliveryByNight": true,
+                      "tranferenciaAutomatica": false,
+                      "ativaParaReceberPedidos": true,
+                      "bloqueadaPelaCentral": false,
+                      "permiteTranferenciaOutraLoja": false,
+                      "inativa": false,
+                      "idHorarioVerao": 1,
+                      "idHorarioDelivery": 1,
+                      "idHorarioDeliveryByNight": 2,
+                      "valorVeiculoPrincial": 7.9,
+                      "valorVeiculoAdicional": 4.5,
+                      "valorVeiculoPrincialByNight": 9,
+                      "valorVeiculoAdicionalByNight": 5,
+                      "cnpj": "57.459.201/0001-79",
+                      "idTipoEmpresa": 1,
+                      "idRegiaoMaster": 41,
+                      "idTipoAdministracao": 41,
+                      "idHorarioFuncionamento": 3,
+                      "codPDV": "",
+                      "lojaEstaBloqueadaParaPedidos": false
+                    }
+                  }]
+                }
+        400:
+          description: Houve um erro durante a execuÃ§Ã£o do mÃ©todo
+          body:
+            application/json:
+              example: |
+                {
+                  "errors": [{
+                    "codigo": 999,
+                    "mensagem": "ParamÃªtro [idCliente] nÃ£o informado. Os parÃ¢metros [idCliente] sÃ£o obrigatÃ³rios.",
+                    "p1": null
+                  }]
+                }
+  /situacao:
+    get:
+      description:
+        O serviÃ§o de situaÃ§Ã£o retorna o status do pedido informado, a fim de validar se o pedido informado ainda Ã© vÃ¡lido no sistema, se foi externamente cancelado, se jÃ¡ excedeu o tempo de compra, etc. A regra Ã© -> Status 41, pode prosseguir com o pedido, pois o mesmo estÃ¡ aberto.
+      queryParameters:
+        aToken:
+          type: string
+          description: Define o token para a realizaÃ§Ã£o da consulta
+          example: 47c2f98b-5e2f-42a0-85a1-b6f63c65e5db
+          required: true
+        idEmpresa:
+          type: number
+          description: Define a empresa que originou o pedido, sendo Habib's[1] ou Ragazzo[2]
+          example: 1
+          required: true
+        idPedido:
+          type: number
+          description:  Define o id do pedido a ser buscado.
+          example: 1248
+          required: true
+      responses:
+        200:
+          description: A chamada obteve sucesso
+          body:
+            application/json:
+              example: |
+                {
+                  "situacao": {
+                    "codigo": "41",
+                    "chave": "EM ELABORAÃÃO",
+                    "descricao": "EM ELABORAÃÃO"
+                  }
+                }
+        400:
+          description: Houve um erro durante a execuÃ§Ã£o do mÃ©todo
+          body:
+            application/json:
+              example: |
+                {
+                  "errors": [{
+                    "codigo": 999,
+                    "mensagem": "NÃ£o foi possÃ­vel encontrar a situaÃ§Ã£o do pedido [974]!",
+                    "p1": null
+                  }]
+                }
+  /salvarItens:
+    post:
+      headers:
+        Content-Type:
+          example: application/json
+      description:
+        O serviÃ§o de salvar itens permite adicionar um ou mais produtos de uma sÃ³ vez Ã  bandeja.
+      queryParameters:
+        aToken:
+          type: string
+          description: Define o token para a realizaÃ§Ã£o da consulta
+          example: 47c2f98b-5e2f-42a0-85a1-b6f63c65e5db
+          required: true
+        idEmpresa:
+          type: number
+          description: Define a empresa que estÃ¡ originando o pedido, sendo Habib's[1] ou Ragazzo[2]
+          example: 1
+          required: true
+        idPedido:
+          type: number
+          description:  Define o id do pedido atual.
+          example: 1248
+          required: true
+      body:
+        application/json:
+          example: |
+            [{
+              "preco": 1.88,
+              "inativo": false,
+              "possuiAgregados": true,
+              "disponivel": true,
+              "idProduto": 21,
+              "descricao": "BIBSFIHA DE CARNE",
+              "combinado": false,
+              "id": 21,
+              "possuiPromocoesProduto": false,
+              "possuiComplementos": false,
+              "crossSelling": [],
+              "agregados": [{
+                "id": 41,
+                "descricao": "ENVIAR LIM\u00c3O",
+                "codigoCorporativo": "7878",
+                "selecionado": false,
+                "quantidade": 0
+              }],
+              "fotos": [],
+              "complementos": [],
+              "codProduto": "1",
+              "quantidade": 1
+            }]
+      responses:
+        200:
+          description: A chamada obteve sucesso
+          body:
+            application/json:
+              example: |
+                {
+                  "pedido": {
+                    "descricaoOrigem": "WEB",
+                    "tempoAtendimento": null,
+                    "numero": 1248,
+                    "byNight": "N",
+                    "id": 1248,
+                    "loja": {
+                      "id": 21,
+                      "descricao": "VOXLINE (HABIBS 1)",
+                      "razaoSocial": "VOXLINE (HABIBS 1)",
+                      "codCorporativo": "9999",
+                      "possuiDelivery": true,
+                      "possuiDeliveryByNight": true,
+                      "tranferenciaAutomatica": false,
+                      "ativaParaReceberPedidos": true,
+                      "bloqueadaPelaCentral": false,
+                      "permiteTranferenciaOutraLoja": false,
+                      "inativa": false,
+                      "idHorarioVerao": 1,
+                      "idHorarioDelivery": 1,
+                      "idHorarioDeliveryByNight": 2,
+                      "valorVeiculoPrincial": 7.9,
+                      "valorVeiculoAdicional": 4.5,
+                      "valorVeiculoPrincialByNight": 9,
+                      "valorVeiculoAdicionalByNight": 5,
+                      "cnpj": "57.459.201/0001-79",
+                      "idTipoEmpresa": 1,
+                      "idRegiaoMaster": 41,
+                      "idTipoAdministracao": 41,
+                      "idHorarioFuncionamento": 3,
+                      "codPDV": "",
+                      "lojaEstaBloqueadaParaPedidos": false
+                    },
+                    "cliente": {
+                      "id": 574689,
+                      "nome": "FIRMINDOS ANASTACIO",
+                      "cpfCnpj": "33863144491",
+                      "dataCadastramento": 1467397672000,
+                      "dadosComplementares": {
+                        "idCliente": 574689
+                      },
+                      "endereco": {
+                        "idCliente": 574689,
+                        "id": 663642,
+                        "tipoLogradouro": {},
+                        "logradouro": "RUA DO PEDIDO HABIBS (FULL)",
+                        "numero": "1",
+                        "bairro": "JARDIM VOXLINE",
+                        "cidade": "SAO PAULO",
+                        "uf": "SP",
+                        "pais": "SP",
+                        "cep": "00000111",
+                        "quadraEsquerda": "1",
+                        "quadraDireita": "10",
+                        "principal": true,
+                        "dadosComplementares": {
+                          "id": 381,
+                          "idCliente": 574689,
+                          "idEndereco": 663642,
+                          "quadra": "1",
+                          "byNight": false,
+                          "funcionario": false,
+                          "inativo": false
+                        },
+                        "noSeg": "SEGVOX00000033",
+                        "numeroQuadrante": "X3",
+                        "letraQuadrante": "Y3",
+                        "noDenominac": "RUA DO PEDIDO HABIBS (DENOMINAC)",
+                        "exclusivo": false,
+                        "valid": true,
+                        "ativo": true,
+                        "novoValid": true
+                      },
+                      "tipoPublico": {
+                        "idCliente": 574689,
+                        "id": 1,
+                        "descricao": "CLIENTE",
+                        "principal": "S"
+                      }
+                    },
+                    "tempoAlterado": null,
+                    "valorTotal": 5.93,
+                    "agendamento": null,
+                    "lojacodigoCorporativo": "9999",
+                    "situacao": "EM ELABORAÃÃO",
+                    "valorEntrega": 3.95,
+                    "valorTotalItens": 1.98
+                  },
+                  "itens": [{
+                    "id": 2182,
+                    "quantidade": 1,
+                    "preco": 0.99,
+                    "idPedido": 1248,
+                    "valorTotal": 0.99,
+                    "idProduto": 21,
+                    "idItemPedido": 2182,
+                    "produto": {
+                      "id": 21,
+                      "idProduto": 21,
+                      "codigoProduto": "1",
+                      "descricao": "BIBSFIHA DE CARNE",
+                      "preco": 1.88,
+                      "disponivel": false,
+                      "possuiPromocao": false,
+                      "combinado": false,
+                      "possuiAgregados": false,
+                      "possuiComplementos": false,
+                      "idGrupo": 241,
+                      "idSubGrupo": 282,
+                      "idTipoProduto": 3,
+                      "descricaoSubGrupo": "TRADICIONAIS"
+                    },
+                    "combinados": {},
+                    "agregados": [{
+                      "id": 41,
+                      "descricao": "ENVIAR LIMÃO",
+                      "codigoCorporativo": "7878",
+                      "selecionado": false,
+                      "quantidade": 0
+                    }],
+                    "total": 0.99,
+                    "possuiPromocoesProduto": false,
+                    "produtoPossuiAgregados": true,
+                    "totalComplementos": 0,
+                    "totalItens": 0.99
+                  }]
+                }
+        400:
+          description: Houve um erro durante a execuÃ§Ã£o do mÃ©todo
+          body:
+            application/json:
+              example: |
+                {
+                  "errors": [{
+                    "codigo": 999,
+                    "mensagem": "Erro ao obter o item do pedido.",
+                    "p1": null
+                  }]
+                }
+  /excluirItem:
+    post:
+      headers:
+        Content-Type:
+          example: application/json
+      description:
+        O serviÃ§o de excluir item remove qualquer item da bandeja, um a um.
+      queryParameters:
+        aToken:
+          type: string
+          description: Define o token para a realizaÃ§Ã£o da consulta
+          example: 47c2f98b-5e2f-42a0-85a1-b6f63c65e5db
+          required: true
+        idEmpresa:
+          type: number
+          description: Define a empresa que estÃ¡ originando o pedido, sendo Habib's[1] ou Ragazzo[2]
+          example: 1
+          required: true
+        idPedido:
+          type: number
+          description:  Define o id do pedido atual.
+          example: 975
+          required: true
+        idItemPedido:
+          type: number
+          description:  Define o id do pedido atual.
+          example: 1185
+          required: true
+      responses:
+        200:
+          description: A chamada obteve sucesso
+          body:
+            application/json:
+              example: |
+                {
+                  "pedido": {
+                    "descricaoOrigem": "CALLCENTER",
+                    "tempoAtendimento": 28,
+                    "numero": 975,
+                    "byNight": "N",
+                    "id": 974,
+                    "loja": {
+                      "id": 21,
+                      "descricao": "VOXLINE (HABIBS 1)",
+                      "razaoSocial": "VOXLINE (HABIBS 1) RAZÃO SOCIAL",
+                      "codCorporativo": "9999",
+                      "possuiDelivery": true,
+                      "possuiDeliveryByNight": true,
+                      "tranferenciaAutomatica": false,
+                      "ativaParaReceberPedidos": true,
+                      "bloqueadaPelaCentral": false,
+                      "permiteTranferenciaOutraLoja": false,
+                      "inativa": false,
+                      "idHorarioVerao": 1,
+                      "idHorarioDelivery": 1,
+                      "idHorarioDeliveryByNight": 2,
+                      "valorVeiculoPrincial": 7.9,
+                      "valorVeiculoAdicional": 4.5,
+                      "valorVeiculoPrincialByNight": 9.0,
+                      "valorVeiculoAdicionalByNight": 5.0,
+                      "cnpj": "57.459.201/0001-79",
+                      "idTipoEmpresa": 1,
+                      "idRegiaoMaster": 1,
+                      "idTipoAdministracao": 41,
+                      "idHorarioFuncionamento": 3,
+                      "codPDV": "",
+                      "lojaEstaBloqueadaParaPedidos": false
+                    },
+                    "cliente": {
+                      "id": 574411,
+                      "nome": "DOISA SOLUÃÃES EM EDIFICAÃÃES",
+                      "cpfCnpj": "22615958000120",
+                      "dadosComplementares": {
+                        "idCliente": 574411
+                      },
+                      "email": {
+                        "id": 1001044,
+                        "email": "CONTATO@2A.COM.BR",
+                        "principal": true
+                      },
+                      "endereco": {
+                        "idCliente": 574411,
+                        "id": 663342,
+                        "tipoLogradouro": {},
+                        "logradouro": "RUA DO PEDIDO HABIBS (FULL)",
+                        "numero": "1",
+                        "bairro": "JARDIM VOXLINE",
+                        "cidade": "SAO PAULO",
+                        "uf": "SP",
+                        "pais": "SP",
+                        "cep": "00000111",
+                        "quadraEsquerda": "1",
+                        "quadraDireita": "10",
+                        "tipo": {
+                          "id": 3,
+                          "descricao": "OUTROS"
+                        },
+                        "principal": true,
+                        "dadosComplementares": {
+                          "id": 101,
+                          "idCliente": 574411,
+                          "idEndereco": 663342,
+                          "segmento": "SEGVOX00000033",
+                          "tipoComplemento": {
+                            "id": 45,
+                            "descricao": "EMPRESA"
+                          },
+                          "nomeEmpresa": "2a",
+                          "setorDepartamentoQuarto": "comercial",
+                          "byNight": false,
+                          "funcionario": false,
+                          "inativo": false
+                        },
+                        "valid": true,
+                        "ativo": true,
+                        "novoValid": true
+                      },
+                      "telefone": {
+                        "idCliente": 574411,
+                        "id": 1001043,
+                        "ddd": 11,
+                        "numero": 55252525,
+                        "ramal": "5511",
+                        "principal": "S",
+                        "tipo": {
+                          "id": 1,
+                          "descricao": "RESIDENCIAL",
+                          "ramalObrigatorio": false
+                        },
+                        "idEndereco": 663342,
+                        "dataInclusao": 1463059435000,
+                        "dataAlteracao": 1463059449000,
+                        "valid": true
+                      },
+                      "tipoPublico": {
+                        "idCliente": 574411,
+                        "id": 23,
+                        "descricao": "VIP",
+                        "principal": "S"
+                      }
+                    },
+                    "tempoAlterado": null,
+                    "valorTotal": 0.0,
+                    "agendamento": null,
+                    "lojacodigoCorporativo": "9999",
+                    "situacao": "N/A",
+                    "valorEntrega": 7.9,
+                    "valorTotalItens": 0.0
+                  }
+                }
+        400:
+          description: Houve um erro durante a execuÃ§Ã£o do mÃ©todo
+          body:
+            application/json:
+              example: |
+                {
+                  "errors": [{
+                    "codigo": 999,
+                    "mensagem": "Erro ao obter o itens do pedido.",
+                    "p1": null
+                  }]
+                }
+  /iniciarPagamento:
+    post:
+      headers:
+        Content-Type:
+          example: application/json
+      description:
+        O serviÃ§o de iniciar pagamento retorna todas as formas de pagamento, bandeiras e condiÃ§Ãµes de cada forma de pagamento, como troco mÃ¡ximo, valor mÃ¡ximo, mÃ¡ximo de mix de formas de pagamento e dados sobre o frete.
+      queryParameters:
+        aToken:
+          type: string
+          description: Define o token para a realizaÃ§Ã£o da consulta
+          example: 47c2f98b-5e2f-42a0-85a1-b6f63c65e5db
+          required: true
+        idEmpresa:
+          type: number
+          description: Define a empresa que estÃ¡ originando o pedido, sendo Habib's[1] ou Ragazzo[2]
+          example: 1
+          required: true
+        idPedido:
+          type: number
+          description:  Define o id do pedido atual.
+          example: 984
+          required: true
+      responses:
+        200:
+          description: A chamada obteve sucesso
+          body:
+            application/json:
+              example: |
+                {
+                  "opcoesPagamento": {
+                    "tipos": [{
+                      "codTipo": "D",
+                      "descricao": "DINHEIRO",
+                      "moedas": [{
+                        "id": 101,
+                        "descricao": "DINHEIRO",
+                        "trocoMaximo": 50,
+                        "limiteMaximo": 1000,
+                        "prioridade": 1,
+                        "bloqueia": false,
+                        "cheque": {}
+                      }]
+                    }, {
+                      "codTipo": "O",
+                      "descricao": "ONLINE",
+                      "moedas": [{
+                        "id": 82,
+                        "descricao": "PAGAMENTO ONLINE",
+                        "trocoMaximo": 0,
+                        "limiteMaximo": 1000,
+                        "prioridade": 4,
+                        "bloqueia": false,
+                        "cheque": {}
+                      }]
+                    }, {
+                      "codTipo": "C",
+                      "descricao": "CARTÃO",
+                      "subTipos": [{
+                        "codSubTipo": "D",
+                        "descricao": "DÃBITO",
+                        "bandeiras": [{
+                          "id": 2,
+                          "descricao": "MASTERCARD",
+                          "moedas": [{
+                            "id": 1,
+                            "descricao": "MASTERCARD DEBITO",
+                            "trocoMaximo": 0,
+                            "limiteMaximo": 1000,
+                            "prioridade": 1,
+                            "bloqueia": false,
+                            "cheque": {}
+                          }]
+                        }]
+                      }]
+                    }],
+                    "quantidadeMaximaDeCombinacoes": 3
+                  },
+                  "frete": {
+                    "quantidadeVeiculos": 1,
+                    "valorEntrega": 7.9,
+                    "valorPrincipal": 7.9,
+                    "valorAdicional": 4.5,
+                    "classificacao": "Pedido Normal"
+                  },
+                  "cupomFiscal": "N"
+                }
+        400:
+          description: Houve um erro durante a execuÃ§Ã£o do mÃ©todo
+          body:
+            application/json:
+              example: |
+                {
+                  "errors": [{
+                    "codigo": 999,
+                    "mensagem": "ParamÃªtro [idPedido] nÃ£o informado. Os parÃ¢metros [idEmpresa, idPedido] sÃ£o obrigatÃ³rios.",
+                    "p1": null
+                  }]
+                }
+  /confirmarClienteDoPedido:
+    post:
+      headers:
+        Content-Type:
+          example: application/json
+      description:
+        O serviÃ§o de aplicar pagamento recebe todas as moedas selecionadas pelo cliente e seus valores e retorna dados lÃ­quidos de troco, o total e o somatÃ³rio de quanto foi pago.
+      queryParameters:
+        aToken:
+          type: string
+          description: Define o token para a realizaÃ§Ã£o da consulta
+          example: 47c2f98b-5e2f-42a0-85a1-b6f63c65e5db
+          required: true
+        idEmpresa:
+          type: number
+          description: Define a empresa que estÃ¡ originando o pedido, sendo Habib's[1] ou Ragazzo[2]
+          example: 1
+          required: true
+        idPedido:
+          type: number
+          description:  Define o id do pedido atual.
+          example: 1023
+          required: true
+        idCliente:
+          type: number
+          description:  Define o id do pedido atual.
+          example: 574596
+          required: true
+        cpfCnpj:
+          type: number
+          description:  Define o id do pedido atual.
+          example: 13312667933
+          required: true
+      responses:
+        200:
+          description: A chamada obteve sucesso
+          body:
+            application/json:
+              example: |
+                {
+                  "pedido": {
+                    "id": 1023,
+                    "idEmpresa": 1,
+                    "idLojaAtendimento": 21,
+                    "idCliente": 574596,
+                    "cliente": {
+                      "id": 574596,
+                      "nome": "JOHN DOE",
+                      "cpfCnpj": "13312667933",
+                      "dataNascimento": 756093600000,
+                      "sexo": "M",
+                      "dadosComplementares": {
+                        "idCliente": 574596,
+                        "dataNascimento": 756093600000,
+                        "idade": 22,
+                        "sexo": "M"
+                      },
+                      "email": {
+                        "id": 1001233,
+                        "email": "john.doe@voxline.com.br",
+                        "principal": true
+                      },
+                      "endereco": {
+                        "idCliente": 574596,
+                        "id": 663522,
+                        "tipoLogradouro": {},
+                        "logradouro": "RUA DO PEDIDO TESTE (FULL)",
+                        "numero": "1",
+                        "bairro": "JARDIM VOXLINE",
+                        "cidade": "SAO PAULO",
+                        "uf": "SP",
+                        "pais": "SP",
+                        "cep": "00000999",
+                        "tipo": {
+                          "id": 2,
+                          "descricao": "RESIDENCIAL"
+                        },
+                        "principal": true,
+                        "dadosComplementares": {
+                          "id": 261,
+                          "idCliente": 574596,
+                          "idEndereco": 663522,
+                          "quadra": "false",
+                          "byNight": false,
+                          "funcionario": false,
+                          "inativo": false
+                        },
+                        "valid": true,
+                        "ativo": true,
+                        "novoValid": true
+                      },
+                      "telefone": {
+                        "idCliente": 574596,
+                        "id": 1001232,
+                        "ddd": 11,
+                        "numero": 986120958,
+                        "principal": "S",
+                        "tipo": {
+                          "id": 1,
+                          "descricao": "RESIDENCIAL",
+                          "ramalObrigatorio": false
+                        },
+                        "idEndereco": 663522,
+                        "dataInclusao": 1465570081000,
+                        "dataAlteracao": 1465592575000,
+                        "valid": true
+                      },
+                      "outrosTelefones": [{
+                        "idCliente": 574596,
+                        "id": 1001251,
+                        "ddd": 11,
+                        "numero": 23232323,
+                        "ramal": "123",
+                        "principal": "N",
+                        "tipo": {
+                          "id": 1,
+                          "descricao": "RESIDENCIAL",
+                          "ramalObrigatorio": false
+                        },
+                        "dataInclusao": 1465592590000,
+                        "dataAlteracao": 1465592603000,
+                        "valid": true
+                      }],
+                      "tipoPublico": {
+                        "idCliente": 574596,
+                        "id": 23,
+                        "descricao": "VIP",
+                        "principal": "S"
+                      }
+                    },
+                    "idOrigemPedido": 2,
+                    "origemPedido": {
+                      "id": 2,
+                      "descricao": "WEB",
+                      "telefoneObrigatorio": false
+                    },
+                    "idFuncionario": 2721,
+                    "situacao": 41,
+                    "situacaoDescricao": "N\/A",
+                    "numero": 1023,
+                    "dataCriacao": 1465841221000,
+                    "valorTotalItens": 0.14,
+                    "valorTotalPedido": 8.04,
+                    "cpfCnpj": "13312667933",
+                    "itens": [{
+                      "id": 1230,
+                      "quantidade": 1,
+                      "preco": 0.14,
+                      "idPedido": 1023,
+                      "valorTotal": 0.14,
+                      "idProduto": 21,
+                      "idItemPedido": 1230,
+                      "produto": {
+                        "id": 21,
+                        "idProduto": 21,
+                        "codigoProduto": "1",
+                        "descricao": "BIBSFIHA DE CARNE",
+                        "preco": 1.88,
+                        "disponivel": false,
+                        "possuiPromocao": false,
+                        "combinado": false,
+                        "possuiAgregados": false,
+                        "possuiComplementos": false,
+                        "idGrupo": 4,
+                        "idSubGrupo": 41,
+                        "idTipoProduto": 3,
+                        "descricaoSubGrupo": "ESFIHAS"
+                      },
+                      "total": 0.14,
+                      "possuiPromocoesProduto": false,
+                      "produtoPossuiAgregados": true,
+                      "totalComplementos": 0,
+                      "totalItens": 0.14
+                    }],
+                    "elementosAgregadosNoPedido": false,
+                    "valorVeiculoPrincipal": 7.9,
+                    "valorVeiculoAdicional": 4.5,
+                    "qtdVeiculos": 1,
+                    "valorEntrega": 7.9,
+                    "tempoAtendimento": 28,
+                    "tipoPedido": "A",
+                    "classificacao": "N",
+                    "cupomFiscal": "S",
+                    "byNight": "N",
+                    "funcionarioHabibs": "N",
+                    "noSeg": "SEGVOX0000001",
+                    "statusRecebimento": "41",
+                    "enderecoEntrega": {
+                      "logradouro": "AVENIDA DAS NA\u00c7\u00d5ES UNIDAS",
+                      "numero": "22540",
+                      "bairro": "VILA ALMEIDA",
+                      "cidade": "SAO PAULO",
+                      "uf": "SP",
+                      "cep": "00000999",
+                      "principal": false,
+                      "noSeg": "SEGVOX0000001",
+                      "valid": true,
+                      "ativo": true,
+                      "novoValid": true
+                    },
+                    "valorPago": 0,
+                    "loja": {
+                      "id": 21,
+                      "descricao": "VOXLINE (HABIBS 1)",
+                      "razaoSocial": "VOXLINE (HABIBS 1) RAZ\u00c3O SOCIAL",
+                      "codCorporativo": "9999",
+                      "possuiDelivery": true,
+                      "possuiDeliveryByNight": true,
+                      "tranferenciaAutomatica": false,
+                      "ativaParaReceberPedidos": true,
+                      "bloqueadaPelaCentral": false,
+                      "permiteTranferenciaOutraLoja": false,
+                      "inativa": false,
+                      "idHorarioVerao": 1,
+                      "idHorarioDelivery": 1,
+                      "idHorarioDeliveryByNight": 2,
+                      "valorVeiculoPrincial": 7.9,
+                      "valorVeiculoAdicional": 4.5,
+                      "valorVeiculoPrincialByNight": 9,
+                      "valorVeiculoAdicionalByNight": 5,
+                      "cnpj": "57.459.201\/0001-79",
+                      "idTipoEmpresa": 1,
+                      "idRegiaoMaster": 1,
+                      "idTipoAdministracao": 41,
+                      "idHorarioFuncionamento": 3,
+                      "codPDV": "",
+                      "lojaEstaBloqueadaParaPedidos": false
+                    }
+                  }
+                }
+        400:
+          description: Houve um erro durante a execuÃ§Ã£o do mÃ©todo
+          body:
+            application/json:
+              example: |
+                {
+                  "errors": [{
+                    "codigo": 999,
+                    "mensagem": "NÃ£o existe pedido com o ID informado",
+                    "p1": null
+                  }]
+                }
+  /aplicarPagamento:
+    post:
+      headers:
+        Content-Type:
+          example: application/json
+      description:
+        O serviÃ§o de aplicar pagamento recebe todas as moedas selecionadas pelo cliente e seus valores e retorna dados lÃ­quidos de troco, o total e o somatÃ³rio de quanto foi pago. O parÃ¢metro "todos" no body somente deve ser utilizado caso um membro for pagar por toda a galera. Os parÃ¢metros transaÃ§Ã£o, nomeCredenciadora e cnpjCredenciadora somente devem ser passados quando o pagamento for via cartÃ£o de crÃ©dito.
+      queryParameters:
+        aToken:
+          type: string
+          description: Define o token para a realizaÃ§Ã£o da consulta
+          example: 47c2f98b-5e2f-42a0-85a1-b6f63c65e5db
+          required: true
+        idEmpresa:
+          type: number
+          description: Define a empresa que estÃ¡ originando o pedido, sendo Habib's[1] ou Ragazzo[2]
+          example: 1
+          required: true
+        idPedido:
+          type: number
+          description:  Define o id do pedido atual.
+          example: 984
+          required: true
+      body:
+        application/json:
+          example: |
+            {
+              "todos":"S",
+              "cupomFiscal": "S",
+              "moedas": [{
+                "id": 41,
+                "valorUtilizado": 8.04,
+                "transacao": 123123123123,
+                "nomeCredenciadora": "BlaBlaBla Broker SA",
+                "cnpjCredenciadora": "04728400000179",
+                "bandeiraOnline": "VISA ELECTRON"
+              }]
+            }
+      responses:
+        200:
+          description: A chamada obteve sucesso
+          body:
+            application/json:
+              example: |
+                {
+                  "valorTotal": 8.04,
+                  "valorPago": 8.04,
+                  "troco": 0.0
+                }
+        400:
+          description: Houve um erro durante a execuÃ§Ã£o do mÃ©todo
+          body:
+            application/json:
+              example: |
+                {
+                  "errors": [
+                    {
+                      "codigo": 999,
+                      "mensagem": "Um dos pedidos da galera nÃ£o possui possui produtos! Logo nÃ£o conseguimos realizar o pagamento da galera!",
+                      "p1": null
+                    }
+                  ]
+                }
+  /cancelarPedido:
+    post:
+      headers:
+        Content-Type:
+          example: application/json
+      description:
+        O serviÃ§o de cancelar pedido pode ou cancelar um pedido ou remover um pedido/integrante da galera.
+      queryParameters:
+        aToken:
+          type: string
+          description: Define o token para a realizaÃ§Ã£o da consulta
+          example: 47c2f98b-5e2f-42a0-85a1-b6f63c65e5db
+          required: true
+        idEmpresa:
+          type: number
+          description: Define a empresa que estÃ¡ originando o pedido, sendo Habib's[1] ou Ragazzo[2]
+          example: 1
+          required: true
+        idPedido:
+          type: number
+          description:  Define o id do pedido atual.
+          example: 984
+          required: true
+        idSubmotivoCancelamento:
+          type: number
+          description: Define o ID do motivo do cancelamento. Por padrÃ£o, para remover o integrante da galera o ID a ser informado Ã© o 181. Este ID deve possuir fÃ¡cil alteraÃ§Ã£o no cÃ³digo, pois serÃ¡ alterado nos prÃ³ximos dias.
+          example: 181
+          required: true
+      responses:
+        200:
+          description: A chamada obteve sucesso
+          body:
+            application/json:
+              example: |
+                {
+                  "id": 1250,
+                  "idEmpresa": 1,
+                  "responsavelCancelamentoPedido": "U",
+                  "idCliente": 574689,
+                  "idOrigemPedido": 2,
+                  "origemPedido": {
+                    "id": 2,
+                    "descricao": "WEB",
+                    "telefoneObrigatorio": false
+                  },
+                  "idFuncionario": 2721,
+                  "situacao": 99,
+                  "situacaoDescricao": "CANCELADO",
+                  "numero": 1250,
+                  "dataCriacao": 1469210000000,
+                  "dataFechamento": 1469210749000,
+                  "valorTotalItens": 0,
+                  "valorTotalPedido": 0,
+                  "cpfCnpj": "33863144491",
+                  "idSubmotivoCancelamento": 181,
+                  "elementosAgregadosNoPedido": false,
+                  "valorEntrega": 0,
+                  "tipoPedido": "N",
+                  "byNight": "N",
+                  "statusRecebimento": "99",
+                  "enderecoEntrega": {
+                    "idCliente": 574689,
+                    "principal": false,
+                    "exclusivo": false,
+                    "valid": false,
+                    "ativo": true,
+                    "novoValid": false
+                  },
+                  "chave": "201607221250",
+                  "valorPago": 0
+                }
+        400:
+          description: Houve um erro durante a execuÃ§Ã£o do mÃ©todo
+          body:
+            application/json:
+              example: |
+                {
+                  "errors": [{
+                    "codigo": 999,
+                    "mensagem": "NÃ£o existe pedido com o ID informado.",
+                    "p1": null
+                  }]
+                }
+  /finalizarPedido:
+    post:
+      headers:
+        Content-Type:
+          example: application/json
+      description:
+        O serviÃ§o de finalizar pedido efetua algumas validacÃµes e encerra o pedido caso nÃ£o encontre divergÃªncias.
+      queryParameters:
+        aToken:
+          type: string
+          description: Define o token para a realizaÃ§Ã£o da consulta
+          example: 47c2f98b-5e2f-42a0-85a1-b6f63c65e5db
+          required: true
+        idEmpresa:
+          type: number
+          description: Define a empresa que estÃ¡ originando o pedido, sendo Habib's[1] ou Ragazzo[2]
+          example: 1
+          required: true
+        idPedido:
+          type: number
+          description:  Define o id do pedido atual.
+          example: 984
+          required: true
+        observacao:
+          type: string
+          description: Neste campo o cliente pode mandar qualquer observaÃ§Ã£o do pedido, desde obs de entrega quanto em relaÃ§Ã£o Ã  produÃ§Ã£o do produto
+          example: Mandar limÃµes que tenham suco. Da ultima vez veio mais seco que o deserto do Saara.
+          required: false
+      responses:
+        200:
+          description: A chamada obteve sucesso
+          body:
+            application/json:
+              example: |
+                {
+                  "id": 984,
+                  "idEmpresa": 1,
+                  "idLojaAtendimento": 21,
+                  "idCliente": 574596,
+                  "idOrigemPedido": 2,
+                  "origemPedido": {
+                    "id": 2,
+                    "descricao": "WEB",
+                    "telefoneObrigatorio": false
+                  },
+                  "idFuncionario": 2721,
+                  "situacao": 8,
+                  "situacaoDescricao": "N\/A",
+                  "numero": 1033,
+                  "dataCriacao": 1465845682000,
+                  "dataFechamento": 1465845725885,
+                  "valorTotalItens": 0.14,
+                  "valorTotalPedido": 8.04,
+                  "itens": [{
+                    "id": 1239,
+                    "quantidade": 1,
+                    "preco": 0.14,
+                    "idPedido": 1033,
+                    "valorTotal": 0.14,
+                    "idProduto": 21,
+                    "idItemPedido": 1239,
+                    "produto": {
+                      "id": 21,
+                      "idProduto": 21,
+                      "codigoProduto": "1",
+                      "descricao": "BIBSFIHA DE CARNE",
+                      "preco": 1.88,
+                      "disponivel": false,
+                      "possuiPromocao": false,
+                      "combinado": false,
+                      "possuiAgregados": false,
+                      "possuiComplementos": false,
+                      "idGrupo": 4,
+                      "idSubGrupo": 41,
+                      "idTipoProduto": 3,
+                      "descricaoSubGrupo": "ESFIHAS"
+                    },
+                    "total": 0.14,
+                    "possuiPromocoesProduto": false,
+                    "produtoPossuiAgregados": true,
+                    "totalComplementos": 0,
+                    "totalItens": 0.14
+                  }],
+                  "elementosAgregadosNoPedido": false,
+                  "valorVeiculoPrincipal": 7.9,
+                  "valorVeiculoAdicional": 4.5,
+                  "qtdVeiculos": 1,
+                  "valorEntrega": 7.9,
+                  "tempoAtendimento": 28,
+                  "tipoPedido": "A",
+                  "classificacao": "N",
+                  "cupomFiscal": "N",
+                  "byNight": "N",
+                  "funcionarioHabibs": "N",
+                  "noSeg": "SEGVOX0000001",
+                  "enviadoMensageria": "N",
+                  "statusRecebimento": "8",
+                  "enderecoEntrega": {
+                    "idCliente": 574596,
+                    "id": 663522,
+                    "tipoLogradouro": {},
+                    "logradouro": "RUA DO PEDIDO TESTE (FULL)",
+                    "numero": "1",
+                    "bairro": "JARDIM VOXLINE",
+                    "cidade": "SAO PAULO",
+                    "uf": "SP",
+                    "pais": "SP",
+                    "cep": "00000999",
+                    "tipo": {
+                      "id": 2,
+                      "descricao": "RESIDENCIAL"
+                    },
+                    "principal": true,
+                    "dadosComplementares": {
+                      "id": 261,
+                      "idCliente": 574596,
+                      "idEndereco": 663522,
+                      "quadra": "false",
+                      "byNight": false,
+                      "funcionario": false,
+                      "inativo": false
+                    },
+                    "valid": true,
+                    "ativo": true,
+                    "novoValid": true
+                  },
+                  "outroDdd": "11",
+                  "outroTelefone": "23232323",
+                  "outroRamal": "123",
+                  "valorPago": 8.04,
+                  "loja": {
+                    "id": 21,
+                    "descricao": "VOXLINE (HABIBS 1)",
+                    "razaoSocial": "VOXLINE (HABIBS 1) RAZ\u00c3O SOCIAL",
+                    "codCorporativo": "9999",
+                    "possuiDelivery": true,
+                    "possuiDeliveryByNight": true,
+                    "tranferenciaAutomatica": false,
+                    "ativaParaReceberPedidos": true,
+                    "bloqueadaPelaCentral": false,
+                    "permiteTranferenciaOutraLoja": false,
+                    "inativa": false,
+                    "idHorarioVerao": 1,
+                    "idHorarioDelivery": 1,
+                    "idHorarioDeliveryByNight": 2,
+                    "valorVeiculoPrincial": 7.9,
+                    "valorVeiculoAdicional": 4.5,
+                    "valorVeiculoPrincialByNight": 9,
+                    "valorVeiculoAdicionalByNight": 5,
+                    "cnpj": "57.459.201\/0001-79",
+                    "idTipoEmpresa": 1,
+                    "idRegiaoMaster": 1,
+                    "idTipoAdministracao": 41,
+                    "idHorarioFuncionamento": 3,
+                    "codPDV": "",
+                    "lojaEstaBloqueadaParaPedidos": false
+                  }
+                }
+        400:
+          description: Houve um erro durante a execuÃ§Ã£o do mÃ©todo
+          body:
+            application/json:
+              example: |
+                {
+                  "errors": [{
+                    "codigo": 999,
+                    "mensagem": "ParamÃªtro [idPedido] nÃ£o informado. Os parÃ¢metros [idEmpresa, idPedido] sÃ£o obrigatÃ³rios.",
+                    "p1": null
+                  }]
+                }
+  /copiarItensPedido:
+    post:
+      headers:
+        Content-Type:
+          example: application/json
+      description:
+        O serviÃ§o de copiar Ã­tens de pedido, clona os produtos de um pedido a um novo pedido JÃ GERADO
+      queryParameters:
+        aToken:
+          type: string
+          description: Define o token para a realizaÃ§Ã£o da consulta
+          example: 47c2f98b-5e2f-42a0-85a1-b6f63c65e5db
+          required: true
+        idEmpresa:
+          type: number
+          description: Define a empresa que estÃ¡ originando o pedido, sendo Habib's[1] ou Ragazzo[2]
+          example: 1
+          required: true
+        idPedido:
+          type: number
+          description:  Define o id do pedido atual.
+          example: 1296
+          required: true
+        idPedidoOrigem:
+          type: number
+          description:  Define o id do pedido atual.
+          example: 1292
+          required: true
+      responses:
+        200:
+          description: A chamada obteve sucesso
+          body:
+            application/json:
+              example: |
+                {
+                  "pedido": {
+                    "descricaoOrigem": "WEB",
+                    "tempoAtendimento": null,
+                    "numero": 1296,
+                    "byNight": "N",
+                    "id": 1296,
+                    "loja": {
+                      "id": 21,
+                      "descricao": "VOXLINE (HABIBS 1)",
+                      "razaoSocial": "VOXLINE (HABIBS 1)",
+                      "codCorporativo": "9999",
+                      "possuiDelivery": true,
+                      "possuiDeliveryByNight": true,
+                      "tranferenciaAutomatica": false,
+                      "ativaParaReceberPedidos": true,
+                      "bloqueadaPelaCentral": false,
+                      "permiteTranferenciaOutraLoja": false,
+                      "inativa": false,
+                      "idHorarioVerao": 1,
+                      "idHorarioDelivery": 1,
+                      "idHorarioDeliveryByNight": 2,
+                      "valorVeiculoPrincial": 7.9,
+                      "valorVeiculoAdicional": 4.5,
+                      "valorVeiculoPrincialByNight": 9,
+                      "valorVeiculoAdicionalByNight": 5,
+                      "cnpj": "57.459.201/0001-79",
+                      "idTipoEmpresa": 1,
+                      "idRegiaoMaster": 41,
+                      "idTipoAdministracao": 41,
+                      "idHorarioFuncionamento": 3,
+                      "codPDV": "",
+                      "lojaEstaBloqueadaParaPedidos": false
+                    },
+                    "tempoAlterado": null,
+                    "valorTotal": 223.36,
+                    "agendamento": null,
+                    "lojacodigoCorporativo": "9999",
+                    "situacao": "EM ELABORAÃÃO",
+                    "valorEntrega": 12.4,
+                    "valorTotalItens": 210.96
+                  },
+                  "itens": [
+                    {
+                      "id": 2465,
+                      "quantidade": 2,
+                      "preco": 1.98,
+                      "idPedido": 1296,
+                      "valorTotal": 3.96,
+                      "idProduto": 131,
+                      "idItemPedido": 2465,
+                      "produto": {
+                        "id": 131,
+                        "idProduto": 131,
+                        "codigoProduto": "3866",
+                        "descricao": "BIB'SFIHA DE CALABRESA",
+                        "preco": 1.98,
+                        "disponivel": false,
+                        "possuiPromocao": false,
+                        "combinado": false,
+                        "possuiAgregados": false,
+                        "possuiComplementos": false,
+                        "idGrupo": 241,
+                        "idSubGrupo": 282,
+                        "idTipoProduto": 3,
+                        "descricaoSubGrupo": "TRADICIONAIS"
+                      },
+                      "combinados": {},
+                      "total": 3.96,
+                      "possuiPromocoesProduto": false,
+                      "produtoPossuiAgregados": false,
+                      "totalComplementos": 0,
+                      "totalItens": 3.96
+                    },
+                    {
+                      "id": 2466,
+                      "quantidade": 10,
+                      "preco": 6.9,
+                      "idPedido": 1296,
+                      "valorTotal": 69,
+                      "idProduto": 62,
+                      "idItemPedido": 2466,
+                      "produto": {
+                        "id": 62,
+                        "idProduto": 62,
+                        "codigoProduto": "531",
+                        "descricao": "COCA COLA 2L",
+                        "preco": 6.9,
+                        "disponivel": false,
+                        "possuiPromocao": false,
+                        "combinado": false,
+                        "possuiAgregados": false,
+                        "possuiComplementos": false,
+                        "idGrupo": 2,
+                        "idSubGrupo": 1,
+                        "idTipoProduto": 3,
+                        "descricaoSubGrupo": "REFRIGERANTE"
+                      },
+                      "combinados": {},
+                      "total": 69,
+                      "possuiPromocoesProduto": false,
+                      "produtoPossuiAgregados": false,
+                      "totalComplementos": 0,
+                      "totalItens": 69
+                    },
+                    {
+                      "id": 2467,
+                      "quantidade": 10,
+                      "preco": 6.9,
+                      "idPedido": 1296,
+                      "valorTotal": 69,
+                      "idProduto": 62,
+                      "idItemPedido": 2467,
+                      "produto": {
+                        "id": 62,
+                        "idProduto": 62,
+                        "codigoProduto": "531",
+                        "descricao": "COCA COLA 2L",
+                        "preco": 6.9,
+                        "disponivel": false,
+                        "possuiPromocao": false,
+                        "combinado": false,
+                        "possuiAgregados": false,
+                        "possuiComplementos": false,
+                        "idGrupo": 2,
+                        "idSubGrupo": 1,
+                        "idTipoProduto": 3,
+                        "descricaoSubGrupo": "REFRIGERANTE"
+                      },
+                      "combinados": {},
+                      "total": 69,
+                      "possuiPromocoesProduto": false,
+                      "produtoPossuiAgregados": false,
+                      "totalComplementos": 0,
+                      "totalItens": 69
+                    },
+                    {
+                      "id": 2468,
+                      "quantidade": 10,
+                      "preco": 6.9,
+                      "idPedido": 1296,
+                      "valorTotal": 69,
+                      "idProduto": 62,
+                      "idItemPedido": 2468,
+                      "produto": {
+                        "id": 62,
+                        "idProduto": 62,
+                        "codigoProduto": "531",
+                        "descricao": "COCA COLA 2L",
+                        "preco": 6.9,
+                        "disponivel": false,
+                        "possuiPromocao": false,
+                        "combinado": false,
+                        "possuiAgregados": false,
+                        "possuiComplementos": false,
+                        "idGrupo": 2,
+                        "idSubGrupo": 1,
+                        "idTipoProduto": 3,
+                        "descricaoSubGrupo": "REFRIGERANTE"
+                      },
+                      "combinados": {},
+                      "total": 69,
+                      "possuiPromocoesProduto": false,
+                      "produtoPossuiAgregados": false,
+                      "totalComplementos": 0,
+                      "totalItens": 69
+                    }
+                  ]
+                }
+        400:
+          description: Houve um erro durante a execuÃ§Ã£o do mÃ©todo
+          body:
+            application/json:
+              example: |
+                {
+                  "errors": [
+                    {
+                      "codigo": 999
+                    }
+                  ]
+                }
+/clientes:
+  get:
+    description:
+      O serviÃ§o de clientes retorna vÃ¡rios dados do cliente especificado.
+    queryParameters:
+      aToken:
+        type: string
+        description: Define o token para a realizaÃ§Ã£o da consulta
+        example: 47c2f98b-5e2f-42a0-85a1-b6f63c65e5db
+        required: true
+      idEmpresa:
+        type: number
+        description: Define a empresa que estÃ¡ originando o pedido, sendo Habib's[1] ou Ragazzo[2]
+        example: 1
+        required: true
+      idCliente:
+        type: number
+        description:  Define o id do cliente em questÃ£o
+        example: 574596
+        required: true
+    responses:
+      200:
+        description: A chamada obteve sucesso
+        body:
+          application/json:
+            example: |
+              {
+                "id": 574596,
+                "cpfCnpj": "13312667933",
+                "dadosComplementares": {
+                  "idCliente": 574596,
+                  "dataNascimento": -2667600000,
+                  "idade": 46,
+                  "sexo": "M"
+                },
+                "email": "john.doe@voxline.com.br",
+                "telefone": {
+                  "idCliente": 574596,
+                  "id": 1001232,
+                  "ddd": 11,
+                  "numero": 986120958,
+                  "ramal": "5515",
+                  "principal": "S",
+                  "tipo": {
+                    "id": 1,
+                    "descricao": "RESIDENCIAL",
+                    "ramalObrigatorio": false
+                  },
+                  "idEndereco": 663548,
+                  "dataInclusao": 1465570081000,
+                  "dataAlteracao": 1468258510000,
+                  "valid": true
+                },
+                "sexo": "M",
+                "dataNascimento": -2667600000,
+                "nome": "JOHN DOE",
+                "aceitaSMS": "N",
+                "endereco": "RUA DO PEDIDO TESTE (FULL), 1 - JARDIM VOXLINE - SAO PAULO - SP",
+                "aceitaNews": "S"
+              }
+      400:
+        description: Houve um erro durante a execuÃ§Ã£o do mÃ©todo
+        body:
+          application/json:
+            example: |
+              {
+                "errors": [{
+                  "codigo": 999,
+                  "mensagem": "ParamÃªtro [idCliente] nÃ£o informado. Os parÃ¢metros [idCliente] sÃ£o obrigatÃ³rios.",
+                  "p1": null
+                }]
+              }
+  post:
+    headers:
+      Content-Type:
+        example: application/json
+    description:
+      O serviÃ§o de clientes retorna vÃ¡rios dados do cliente especificado.
+    queryParameters:
+      aToken:
+        type: string
+        description: Define o token para a realizaÃ§Ã£o da consulta
+        example: 47c2f98b-5e2f-42a0-85a1-b6f63c65e5db
+        required: true
+      idEmpresa:
+        type: number
+        description: Define a empresa que estÃ¡ originando o pedido, sendo Habib's[1] ou Ragazzo[2]
+        example: 1
+        required: true
+      idCliente:
+        type: number
+        description:  Define o id do cliente em questÃ£o
+        example: 574596
+        required: true
+      nome:
+        type: string
+        description: Define o nome do cliente
+        example: John Doe
+        required: true
+      cpfCnpj:
+        type: number
+        description:  Define o CPF do cliente
+        example: 13312667933
+        required: true
+      email:
+        type: string
+        description: Define o e-mail do cliente
+        example: john.doe@voxline.com.br
+        required: true
+      idTelefone:
+        type: number
+        description:  Define o ID do telefone principal do cliente
+        example: 1001232
+        required: false
+      ddd:
+        type: number
+        description:  Define o DDD do telefone principal do cliente
+        example: 11
+        required: false
+      telefone:
+        type: number
+        description:  Define o nÃºmero do telefone principal do cliente
+        example: 55255555
+        required: false
+      ramal:
+        type: number
+        description:  Define o ramal do telefone principal do cliente. Se nÃ£o houver deve ser passado em branco
+        example: 5515
+        required: false
+      tipoTelefone:
+        type: number
+        description:  Define o ID do tipo do telefone principal do cliente
+        example: 1
+        required: false
+      dataNascimento:
+        type: string
+        description: Define a data de nascimento do cliente
+        example: 01/12/1969
+        required: true
+      sexo:
+        type: string
+        description: Define a data de nascimento do cliente
+        enum: ['M', 'F']
+        example: M
+        required: true
+      senha:
+        type: string
+        description: Define a senha do cadastro
+        example: '123456'
+        required: false
+      confirmarSenha:
+        type: string
+        description: Confirma a senha do cadastro. SÃ³ Ã© obrigatÃ³rio o uso desta ao usar o campo "senha"
+        example: '123456'
+        required: false
+      senhaAtual:
+        type: string
+        description: Informa a senha atual do cadastro. SÃ³ deve ser utilizada caso a senha jÃ¡ tenha sido definida e os parametros "senha"e "confirmarSenha" estiverem presentes
+        example: '123456'
+        required: false
+      aceitaNews:
+        type: string
+        enum: [S, N]
+        description: Informa a Flag se o cliente aceita receber newsletter.
+        example: S
+        required: false
+      aceitaSMS:
+        type: string
+        enum: [S, N]
+        description: Informa a Flag se o cliente aceita receber SMS.
+        example: N
+        required: false
+      socialId:
+        type: string
+        description: Informa o Social ID para ser utilizado no login via FaceBook
+        example: '444555'
+        required: false
+    responses:
+      200:
+        description: A chamada obteve sucesso
+        body:
+          application/json:
+            example: |
+              {
+                "cliente": {
+                  "id": 574596,
+                  "nome": "JOHN DOE",
+                  "cpfCnpj": "13312667933",
+                  "dataNascimento": -2667600000,
+                  "dataAlteracao": 1469216959000,
+                  "funcionarioAlteracao": {
+                    "id": 2721,
+                    "idEmpresa": 1,
+                    "atendeByNight": false,
+                    "backoffice": false
+                  },
+                  "sexo": "M",
+                  "aceitaSMS": "N",
+                  "aceitaNews": "S",
+                  "dadosComplementares": {
+                    "idCliente": 574596,
+                    "dataNascimento": -2667600000,
+                    "idade": 46,
+                    "sexo": "M"
+                  },
+                  "email": {
+                    "idCliente": 574596,
+                    "id": 1001233,
+                    "email": "john.doe@voxline.com.br",
+                    "principal": true
+                  },
+                  "endereco": {
+                    "idCliente": 574596,
+                    "id": 663548,
+                    "tipoLogradouro": {},
+                    "logradouro": "RUA DO PEDIDO TESTE (FULL)",
+                    "numero": "1",
+                    "bairro": "JARDIM VOXLINE",
+                    "cidade": "SAO PAULO",
+                    "uf": "SP",
+                    "pais": "SP",
+                    "cep": "00000999",
+                    "tipo": {
+                      "id": 2,
+                      "descricao": "RESIDENCIAL"
+                    },
+                    "principal": true,
+                    "dadosComplementares": {
+                      "id": 288,
+                      "idCliente": 574596,
+                      "idEndereco": 663548,
+                      "byNight": false,
+                      "funcionario": false,
+                      "inativo": false
+                    },
+                    "noSeg": "SEGVOX0000001",
+                    "numeroQuadrante": "X1",
+                    "letraQuadrante": "Y1",
+                    "exclusivo": false,
+                    "valid": true,
+                    "ativo": true,
+                    "novoValid": true
+                  },
+                  "telefone": {
+                    "idCliente": 574596,
+                    "id": 1001232,
+                    "ddd": 11,
+                    "numero": 986120958,
+                    "ramal": "5515",
+                    "principal": "S",
+                    "tipo": {
+                      "id": 1,
+                      "descricao": "RESIDENCIAL",
+                      "ramalObrigatorio": false
+                    },
+                    "idEndereco": 663548,
+                    "dataInclusao": 1465570081000,
+                    "dataAlteracao": 1469216959000,
+                    "valid": true
+                  },
+                  "outrosTelefones": [{
+                    "idCliente": 574596,
+                    "id": 1001285,
+                    "ddd": 11,
+                    "numero": 45454545,
+                    "principal": "N",
+                    "tipo": {
+                      "id": 1,
+                      "descricao": "RESIDENCIAL",
+                      "ramalObrigatorio": false
+                    },
+                    "dataInclusao": 1465928057000,
+                    "dataAlteracao": 1467655397000,
+                    "valid": true
+                  }],
+                  "tipoPublico": {
+                    "idCliente": 574596,
+                    "id": 23,
+                    "descricao": "VIP",
+                    "principal": "S"
+                  }
+                }
+              }
+      400:
+        description: Houve um erro durante a execuÃ§Ã£o do mÃ©todo
+        body:
+          application/json:
+            example: |
+              {
+                "errors": [{
+                  "codigo": 999,
+                  "mensagem": "ParamÃªtro [idEmpresa] nÃ£o informado. Os parÃ¢metros [idEmpresa, ddd, telefone, nome] sÃ£o obrigatÃ³rios.",
+                  "p1": null
+                }]
+              }
+  /buscaFiltrada:
+    get:
+      description:
+        O serviÃ§o de busca filtrada pode recuperar dados de um cliente pelo "email", "cpfCnpj" ou pelo "nome"
+      queryParameters:
+        aToken:
+          type: string
+          description: Define o token para a realizaÃ§Ã£o da consulta
+          example: 47c2f98b-5e2f-42a0-85a1-b6f63c65e5db
+          required: true
+        email:
+          type: string
+          description: Define o e-mail do clienta para a busca
+          example: email@email.com
+          required: false
+        cpfCnpj:
+          type: number
+          description: Define o CPF do clienta para a busca
+          example: 12312312312
+          required: false
+        nome:
+          type: string
+          description: Define o nome do clienta para a busca
+          example: John Doe
+          required: false
+      responses:
+        200:
+          description: A chamada obteve sucesso
+          body:
+            application/json:
+              example: |
+                {
+                  "pageCount": 1,
+                  "data": [{
+                    "aceitaSMS": "S",
+                    "telefone": {
+                      "idCliente": 472987,
+                      "id": 1458599,
+                      "ddd": 11,
+                      "numero": 55255404,
+                      "tipo": {
+                        "id": 1,
+                        "descricao": "RESIDENCIAL",
+                        "ramalObrigatorio": false
+                      },
+                      "idEndereco": 543338,
+                      "valid": true
+                    },
+                    "dadosComplementares": {
+                      "idCliente": 472987
+                    },
+                    "endereco": "ATALIBA LEONEL, 107 - SANTANA - SAO PAULO - SP",
+                    "nome": "JOHN DOE",
+                    "id": 472987,
+                    "aceitaNews": "S",
+                    "cpfCnpj": "12312312312",
+                    "sexo": "",
+                    "dataNascimento": null,
+                    "email": "EMAIL@GMAIL.COM"
+                  }]
+                }
+        400:
+          description: Houve um erro durante a execuÃ§Ã£o do mÃ©todo
+          body:
+            application/json:
+              example: |
+                {
+                  "errors": [{
+                    "codigo": 999,
+                    "mensagem": "Ao menos ums dos seguintes parÃ¢metros [cpfCnpj, email, nome] deve informado.",
+                    "p1": null
+                  }]
+                }
+  /associarEndereco:
+    is: [ traits.Alterado! ]
+    post:
+      headers:
+        Content-Type:
+          example: application/json
+      description:
+        O serviÃ§o de associar endereÃ§o cria ou altera um possÃ­vel endereÃ§o de entrega do pedido dentro do cadastro do cliente.
+      queryParameters:
+        aToken:
+          type: string
+          description: Define o token para a realizaÃ§Ã£o da consulta
+          example: 47c2f98b-5e2f-42a0-85a1-b6f63c65e5db
+          required: true
+        idEmpresa:
+          type: number
+          description: Define a empresa que estÃ¡ originando o pedido, sendo Habib's[1] ou Ragazzo[2]
+          example: 1
+          required: true
+        idCliente:
+          type: number
+          description:  Define o id do cliente em questÃ£o
+          example: 574596
+          required: true
+      body:
+        application/json:
+          example: |
+            {
+              "id": "663522",
+              "idCliente": 700625,
+              "logradouro": "RUA DO PEDIDO TESTE  HAB-RAG (FULL)",
+              "bairro": "JARDIM VOXLINE",
+              "cidade": "SAO PAULO",
+              "uf": "SP",
+              "numero": "2",
+              "quadra": "",
+              "cep": "00000998",
+              "tipo": {
+                "id": "2"
+              },
+              "noSeg": "SEGVOXTESTE003"
+            }
+      responses:
+        200:
+          description: A chamada obteve sucesso
+          body:
+            application/json:
+              example: |
+                {
+                  "idCliente": 574596,
+                  "id": 663548,
+                  "tipoLogradouro": {},
+                  "logradouro": "RUA DO PEDIDO TESTE (FULL)",
+                  "numero": "1",
+                  "bairro": "JARDIM VOXLINE",
+                  "cidade": "SAO PAULO",
+                  "uf": "SP",
+                  "pais": "SP",
+                  "cep": "00000999",
+                  "tipo": {
+                    "id": 2,
+                    "descricao": "RESIDENCIAL"
+                  },
+                  "principal": true,
+                  "dadosComplementares": {
+                    "id": 288,
+                    "idCliente": 574596,
+                    "idEndereco": 663548,
+                    "byNight": false,
+                    "funcionario": false,
+                    "inativo": false
+                  },
+                  "noSeg": "SEGVOX0000001",
+                  "exclusivo": false,
+                  "valid": true,
+                  "ativo": true,
+                  "novoValid": true
+                }
+        400:
+          description: Houve um erro durante a execuÃ§Ã£o do mÃ©todo
+          body:
+            application/json:
+              example: |
+                {
+                  "errors": [{
+                    "codigo": 999,
+                    "mensagem": "ParamÃªtro [idCliente] nÃ£o informado. Os parÃ¢metros [idEmpresa, idCliente] sÃ£o obrigatÃ³rios.",
+                    "p1": null
+                  }]
+                }
+  /removerEndereco:
+    post:
+      headers:
+        Content-Type:
+          example: application/json
+      description:
+        O serviÃ§o de remover endereÃ§o oculta o endereÃ§o setado quando executada a consulta de endereÃ§os disponiveis para a entrega. O cliente deve ter ao menos um outro endereÃ§o disponivel no cadastro. Sendo os demais, passÃ­veis de remoÃ§Ã£o.
+      queryParameters:
+        aToken:
+          type: string
+          description: Define o token para a realizaÃ§Ã£o da consulta
+          example: 47c2f98b-5e2f-42a0-85a1-b6f63c65e5db
+          required: true
+        idEmpresa:
+          type: number
+          description: Define a empresa que estÃ¡ originando o pedido, sendo Habib's[1] ou Ragazzo[2]
+          example: 1
+          required: true
+        idCliente:
+          type: number
+          description:  Define o id do cliente em questÃ£o
+          example: 574596
+          required: true
+        idEndereco:
+          type: number
+          description:  Define o id do cliente em questÃ£o
+          example: 663522
+          required: true
+      responses:
+        200:
+          description: A chamada obteve sucesso
+          body:
+            application/json:
+              example: |
+                [{
+                  "idCliente": 574596,
+                  "id": 663548,
+                  "tipoLogradouro": {},
+                  "logradouro": "RUA DO PEDIDO TESTE (FULL)",
+                  "numero": "1",
+                  "bairro": "JARDIM VOXLINE",
+                  "cidade": "SAO PAULO",
+                  "uf": "SP",
+                  "pais": "SP",
+                  "cep": "00000999",
+                  "tipo": {
+                    "id": 2,
+                    "descricao": "RESIDENCIAL"
+                  },
+                  "principal": true,
+                  "dadosComplementares": {
+                    "id": 288,
+                    "idCliente": 574596,
+                    "idEndereco": 663548,
+                    "byNight": false,
+                    "funcionario": false,
+                    "inativo": false
+                  },
+                  "noSeg": "SEGVOX0000001",
+                  "numeroQuadrante": "X1",
+                  "letraQuadrante": "Y1",
+                  "noDenominac": "RUA DO PEDIDO TESTE (DENOMINAC)",
+                  "exclusivo": false,
+                  "valid": true,
+                  "ativo": true,
+                  "novoValid": true
+                }]
+        400:
+          description: Houve um erro durante a execuÃ§Ã£o do mÃ©todo
+          body:
+            application/json:
+              example: |
+                {
+                  "errors": [{
+                    "codigo": 999,
+                    "mensagem": "Id do endereÃ§o nÃ£o encontrado.",
+                    "p1": null
+                  }]
+                }
+  /recuperarSenha:
+    get:
+      description:
+        O serviÃ§o de recuperar senha recupera um token para ser utilizado na atualizaÃ§Ã£o cadastral da senha do usuÃ¡rio.
+      queryParameters:
+        aToken:
+          type: string
+          description: Define o token para a realizaÃ§Ã£o da consulta
+          example: 47c2f98b-5e2f-42a0-85a1-b6f63c65e5db
+          required: true
+        email:
+          type: string
+          description: Define o e-mail do cliente
+          example: john.doe@voxline.com.br
+          required: true
+      responses:
+        200:
+          description: A chamada obteve sucesso
+          body:
+            application/json:
+              example: |
+                {
+                  "token": "bf1d1c53-880e-4887-a370-b2ab1b891fac"
+                }
+        400:
+          description: Houve um erro durante a execuÃ§Ã£o do mÃ©todo
+          body:
+            application/json:
+              example: |
+                {
+                  "errors": [
+                    {
+                      "codigo": 999,
+                      "mensagem": "NÃ£o foi possÃ­vel localizar o e-mail principal [john.doe@voxline.com.brasd]",
+                      "p1": null
+                    }
+                  ]
+                }
+  /validar:
+    post:
+      description:
+        O serviÃ§o de validar cliente bate usuÃ¡rio vs senha para fins de login. O parÃ¢metro "socialId" do body pode ser substituido pelo social ID do facebook para o mesmo fim, coforme exemplo no "schema"
+      queryParameters:
+        aToken:
+          type: string
+          description: Define o token para a realizaÃ§Ã£o da consulta
+          example: 47c2f98b-5e2f-42a0-85a1-b6f63c65e5db
+          required: true
+      body:
+        application/json:
+          example: |
+            {
+                "email": "john.doe@voxline.com.br",
+                "senha": "123456"
+            }
+          schema: |
+            {
+                "email": "john.doe@voxline.com.br",
+                "socialId": "444555"
+            }
+      responses:
+        200:
+          description: A chamada obteve sucesso
+          body:
+            application/json:
+              example: |
+                {
+                  "id": 574596,
+                  "nome": "JOHN DOE",
+                  "cpfCnpj": "13312667933",
+                  "dataNascimento": -2667600000,
+                  "dataAlteracao": 1469216959000,
+                  "funcionarioAlteracao": {
+                    "id": 2721,
+                    "idEmpresa": 1,
+                    "atendeByNight": false,
+                    "backoffice": false
+                  },
+                  "sexo": "M",
+                  "dadosComplementares": {
+                    "idCliente": 574596,
+                    "dataNascimento": -2667600000,
+                    "idade": 46,
+                    "sexo": "M"
+                  },
+                  "email": {
+                    "idCliente": 574596,
+                    "id": 1001233,
+                    "email": "john.doe@voxline.com.br",
+                    "principal": true
+                  },
+                  "endereco": {
+                    "idCliente": 574596,
+                    "id": 663548,
+                    "tipoLogradouro": {},
+                    "logradouro": "RUA DO PEDIDO TESTE (FULL)",
+                    "numero": "1",
+                    "bairro": "JARDIM VOXLINE",
+                    "cidade": "SAO PAULO",
+                    "uf": "SP",
+                    "pais": "SP",
+                    "cep": "00000999",
+                    "tipo": {
+                      "id": 2,
+                      "descricao": "RESIDENCIAL"
+                    },
+                    "principal": true,
+                    "dadosComplementares": {
+                      "id": 288,
+                      "idCliente": 574596,
+                      "idEndereco": 663548,
+                      "byNight": false,
+                      "funcionario": false,
+                      "inativo": false
+                    },
+                    "noSeg": "SEGVOX0000001",
+                    "numeroQuadrante": "X1",
+                    "letraQuadrante": "Y1",
+                    "noDenominac": "RUA DO PEDIDO TESTE (DENOMINAC)",
+                    "exclusivo": false,
+                    "valid": true,
+                    "ativo": true,
+                    "novoValid": true
+                  },
+                  "telefone": {
+                    "idCliente": 574596,
+                    "id": 1001232,
+                    "ddd": 11,
+                    "numero": 986120958,
+                    "ramal": "5515",
+                    "principal": "S",
+                    "tipo": {
+                      "id": 1,
+                      "descricao": "RESIDENCIAL",
+                      "ramalObrigatorio": false
+                    },
+                    "idEndereco": 663548,
+                    "dataInclusao": 1465570081000,
+                    "dataAlteracao": 1469216959000,
+                    "valid": true
+                  },
+                  "outrosTelefones": [{
+                    "idCliente": 574596,
+                    "id": 1001285,
+                    "ddd": 11,
+                    "numero": 45454545,
+                    "principal": "N",
+                    "tipo": {
+                      "id": 1,
+                      "descricao": "RESIDENCIAL",
+                      "ramalObrigatorio": false
+                    },
+                    "dataInclusao": 1465928057000,
+                    "dataAlteracao": 1467655397000,
+                    "valid": true
+                  }],
+                  "tipoPublico": {
+                    "idCliente": 574596,
+                    "id": 23,
+                    "descricao": "VIP",
+                    "principal": "S"
+                  }
+                }
+        400:
+          description: Houve um erro durante a execuÃ§Ã£o do mÃ©todo
+          body:
+            application/json:
+              example: |
+                {
+                  "errors": [
+                      {
+                        "codigo": 999,
+                        "mensagem": "As informaÃ§Ãµes informadas nÃ£o sÃ£o vÃ¡lidas!",
+                      "p1": null
+                    }
+                  ]
+                }
+  /alterarSenha:
+    post:
+      description:
+        O serviÃ§o de alterar senha serve tanto para alterar a senha como para recuperar a senha junto ao token de recuperaÃ§Ã£o de senha.
+      queryParameters:
+        aToken:
+          type: string
+          description: Define o token para a realizaÃ§Ã£o da consulta
+          example: 47c2f98b-5e2f-42a0-85a1-b6f63c65e5db
+          required: true
+        idEmpresa:
+          type: number
+          description: Define a empresa que estÃ¡ originando o cadastro, sendo Habib's[1] ou Ragazzo[2]
+          example: 1
+          required: true
+        email:
+          type: string
+          description: Define o e-mail do cliente que estÃ¡ alterando a senha
+          example: john.doe@voxline.com.br
+          required: true
+        senhaAtual:
+          type: string
+          description: Define a senha atual do cadastro do cliente OU o token de recuperaÃ§Ã£o
+          example: '123456'
+          required: true
+        senha:
+          type: string
+          description: Define a nova senha do cliente
+          example: '123456'
+          required: true
+        confirmarSenha:
+          type: string
+          description: Define a confirmaÃ§Ã£o da nova senha do cliente
+          example: '123456'
+          required: true
+      responses:
+        200:
+          description: A chamada obteve sucesso
+          body:
+            application/json:
+              example: |
+                {
+                  "cliente": {
+                    "id": 574596,
+                    "nome": "JOHN DOE",
+                    "cpfCnpj": "13312667933",
+                    "dataNascimento": -2667600000,
+                    "dataAlteracao": 1472661538000,
+                    "funcionarioAlteracao": {
+                      "id": 2721,
+                      "idEmpresa": 1,
+                      "atendeByNight": false,
+                      "backoffice": false
+                    },
+                    "sexo": "M",
+                    "dadosComplementares": {
+                      "idCliente": 574596,
+                      "dataNascimento": -2667600000,
+                      "idade": 46,
+                      "sexo": "M"
+                    },
+                    "email": {
+                      "idCliente": 574596,
+                      "id": 1001233,
+                      "email": "john.doe@voxline.com.br",
+                      "principal": true
+                    },
+                    "endereco": {
+                      "idCliente": 574596,
+                      "id": 663743,
+                      "tipoLogradouro": {},
+                      "logradouro": "RUA DO PEDIDO TESTE (FULL)",
+                      "numero": "1",
+                      "bairro": "JARDIM VOXLINE",
+                      "cidade": "SAO PAULO",
+                      "uf": "SP",
+                      "pais": "SP",
+                      "cep": "00000999",
+                      "tipo": {
+                        "id": 2,
+                        "descricao": "RESIDENCIAL"
+                      },
+                      "principal": true,
+                      "dadosComplementares": {
+                        "id": 521,
+                        "idCliente": 574596,
+                        "idEndereco": 663743,
+                        "byNight": false,
+                        "funcionario": false,
+                        "inativo": false
+                      },
+                      "noSeg": "SEGVOX0000001",
+                      "numeroQuadrante": "X1",
+                      "letraQuadrante": "Y1",
+                      "noDenominac": "RUA DO PEDIDO TESTE (DENOMINAC)",
+                      "exclusivo": false,
+                      "valid": true,
+                      "ativo": true,
+                      "novoValid": true
+                    },
+                    "telefone": {
+                      "idCliente": 574596,
+                      "id": 1001542,
+                      "ddd": 11,
+                      "numero": 45454545,
+                      "ramal": "5515",
+                      "principal": "S",
+                      "tipo": {
+                        "id": 1,
+                        "descricao": "RESIDENCIAL",
+                        "ramalObrigatorio": false
+                      },
+                      "dataInclusao": 1470684724000,
+                      "dataAlteracao": 1472661538000,
+                      "valid": true
+                    },
+                    "tipoPublico": {
+                      "idCliente": 574596,
+                      "id": 23,
+                      "descricao": "VIP",
+                      "principal": "S"
+                    }
+                  }
+                }
+        400:
+          description: Houve um erro durante a execuÃ§Ã£o do mÃ©todo
+          body:
+            application/json:
+              example: |
+                {
+                  "errors": [{
+                    "codigo": 999,
+                    "mensagem": "Para cadastrar uma senha, a senha e a confirmaÃ§Ã£o de senha devem ser iguais!",
+                    "p1": null
+                  }]
+                }
+/dadosComplementares:
+  is: [ traits.Alterado! ]
+  get:
+    description:
+      O serviÃ§o de dados complementares retorna dados mais especÃ­ficos do cadastro do cliente
+    queryParameters:
+      aToken:
+        type: string
+        description: Define o token para a realizaÃ§Ã£o da consulta
+        example: 47c2f98b-5e2f-42a0-85a1-b6f63c65e5db
+        required: true
+      idEmpresa:
+        type: number
+        description: Define a empresa que estÃ¡ originando o pedido, sendo Habib's[1] ou Ragazzo[2]
+        example: 1
+        required: true
+      idCliente:
+        type: number
+        description:  Define o id do cliente em questÃ£o
+        example: 574596
+        required: true
+    responses:
+      200:
+        description: A chamada obteve sucesso
+        body:
+          application/json:
+            example: |
+              {
+                "cliente": {
+                  "idCliente": 574596,
+                  "dataNascimento": -2667600000,
+                  "idade": 46,
+                  "sexo": "M"
+                },
+                "endereco": {
+                  "id": 288,
+                  "idCliente": 574596,
+                  "idEndereco": 663548,
+                  "byNight": false,
+                  "funcionario": false,
+                  "inativo": false
+                },
+                "outroFone": {
+                  "idCliente": 574596,
+                  "id": 1001285,
+                  "ddd": 11,
+                  "numero": 45454545,
+                  "principal": "N",
+                  "tipo": {
+                    "id": 1,
+                    "descricao": "RESIDENCIAL",
+                    "ramalObrigatorio": false
+                  },
+                  "dataInclusao": 1465928057000,
+                  "dataAlteracao": 1467655397000,
+                  "valid": true
+                },
+                "enderecoCompleto": {
+                  "idCliente": 574596,
+                  "id": 663548,
+                  "tipoLogradouro": {},
+                  "logradouro": "RUA DO PEDIDO TESTE (FULL)",
+                  "numero": "1",
+                  "bairro": "JARDIM VOXLINE",
+                  "cidade": "SAO PAULO",
+                  "uf": "SP",
+                  "pais": "SP",
+                  "cep": "00000999",
+                  "tipo": {
+                    "id": 2,
+                    "descricao": "RESIDENCIAL"
+                  },
+                  "principal": true,
+                  "dadosComplementares": {
+                    "id": 288,
+                    "idCliente": 574596,
+                    "idEndereco": 663548,
+                    "byNight": false,
+                    "funcionario": false,
+                    "inativo": false
+                  },
+                  "noSeg": "SEGVOX0000001",
+                  "numeroQuadrante": "X1",
+                  "letraQuadrante": "Y1",
+                  "noDenominac": "RUA DO PEDIDO TESTE (DENOMINAC)",
+                  "exclusivo": false,
+                  "valid": true,
+                  "ativo": true,
+                  "novoValid": true
+                }
+              }
+      400:
+        description: Houve um erro durante a execuÃ§Ã£o do mÃ©todo
+        body:
+          application/json:
+            example: |
+              {
+                "errors": [{
+                  "codigo": 999,
+                  "mensagem": "NÃ£o foi encontrado cliente com o ID informado",
+                  "p1": null
+                }]
+              }
+  post:
+    description:
+      O serviÃ§o de dados complementares altera dados do endereÃ§o do cliente e adiciona informaÃ§Ãµes pertinentes ao tipo do endereÃ§o
+    queryParameters:
+      aToken:
+        type: string
+        description: Define o token para a realizaÃ§Ã£o da consulta
+        example: 47c2f98b-5e2f-42a0-85a1-b6f63c65e5db
+        required: true
+      idEmpresa:
+        type: number
+        description: Define a empresa que estÃ¡ originando o pedido, sendo Habib's[1] ou Ragazzo[2]
+        example: 1
+        required: true
+    body:
+      application/json:
+        example: |
+          {
+            "cliente": {
+              "idCliente": 700606
+            },
+            "endereco": {
+              "idEndereco": 815522,
+              "tipoComplemento": {
+                "id": 2
+              },
+              "andar": "12",
+              "funcionario": false,
+              "nomeEmpresa": "Voxline Contact Center",
+              "setorDepartamentoQuarto": "Tecnologia da informaÃ§Ã£o",
+              "referencia": "RUA DO HOSPITAL DAS CLÃNICAS",
+              "complemento": "FUNDOS",
+              "numeroPortaria": "01"
+            },
+            "outroFone": {
+              "tipo": {
+                "id": 1
+              },
+              "ddd": 11,
+              "numero": 25255454
+            }
+          }
+    responses:
+      200:
+        description: A chamada obteve sucesso
+        body:
+          application/json:
+            example: |
+              {
+                "cliente": {
+                  "idCliente": 700606,
+                  "sexo": "M"
+                },
+                "endereco": {
+                  "id": 201,
+                  "idCliente": 700605,
+                  "segmento": "SEGVOXTESTE001",
+                  "tipoComplemento": {
+                    "id": 2,
+                    "descricao": "APARTAMENTO",
+                    "config": [{
+                      "id": 15,
+                      "chave": "PONTO_REFERENCIA",
+                      "visivel": true,
+                      "obrigatorio": false,
+                      "ajuda": "INFORMAR PONTO DE REFERENCIA",
+                      "nomeCampo": "Ponto de ReferÃªncia",
+                      "descricao": "PONTO DE REFERÃNCIA:",
+                      "maxLength": 255
+                    }, {
+                      "id": 14,
+                      "chave": "COMPLEMENTO",
+                      "visivel": true,
+                      "obrigatorio": false,
+                      "ajuda": "INFORMAR NOME DO EDIFICIO E NUMERO DO APARTAMENTO",
+                      "nomeCampo": "Complemento",
+                      "descricao": "NOME EDIFICIO / NUMERO DO APARTAMENTO",
+                      "maxLength": 255
+                    }, {
+                      "id": 10,
+                      "chave": "NUMERO_PORTARIA",
+                      "visivel": true,
+                      "obrigatorio": false,
+                      "ajuda": "INFORMAR NÃMERO DA PORTARIA",
+                      "nomeCampo": "NÃºmero da Portaria",
+                      "descricao": "PORTARIA:",
+                      "maxLength": 10
+                    }]
+                  },
+                  "nomeEmpresa": "Voxline Contact Center",
+                  "numeroPortaria": "01",
+                  "andar": "12",
+                  "setorDepartamentoQuarto": "Tecnologia da informaÃ§Ã£o",
+                  "byNight": false,
+                  "funcionario": false,
+                  "inativo": false,
+                  "referencia": "RUA DO HOSPITAL DAS CLÃNICAS",
+                  "complemento": "FUNDOS"
+                },
+                "outroFone": {
+                  "ddd": 11,
+                  "numero": 25255454,
+                  "ramal": "123",
+                  "principal": "N",
+                  "tipo": {
+                    "id": 1,
+                    "descricao": "RESIDENCIAL",
+                    "ramalObrigatorio": false
+                  },
+                  "valid": true
+                }
+              }
+      400:
+        description: Houve um erro durante a execuÃ§Ã£o do mÃ©todo
+        body:
+          application/json:
+            example: |
+              {
+                "errors": [{
+                  "codigo": 999,
+                  "mensagem": "O endereÃ§o informado nÃ£o pertence ao cliente.",
+                  "p1": null
+                }]
+              }
+/telefones:
+  get:
+    description:
+      O serviÃ§o de telefones retorna todos os dados de todos os telefones do cliente, inclusive ramal e o tipo do contato [Comercial, Residencial, etc.]
+    queryParameters:
+      aToken:
+        type: string
+        description: Define o token para a realizaÃ§Ã£o da consulta
+        example: 47c2f98b-5e2f-42a0-85a1-b6f63c65e5db
+        required: true
+      idEmpresa:
+        type: number
+        description: Define a empresa que estÃ¡ originando o pedido, sendo Habib's[1] ou Ragazzo[2]
+        example: 1
+        required: true
+      idCliente:
+        type: number
+        description:  Define o id do cliente em questÃ£o
+        example: 574596
+        required: true
+    responses:
+      200:
+        description: A chamada obteve sucesso
+        body:
+          application/json:
+            example: |
+              {
+                "telefonePrincipal": {
+                  "idCliente": 574596,
+                  "id": 1001232,
+                  "ddd": 11,
+                  "numero": 986120958,
+                  "ramal": "5515",
+                  "principal": "S",
+                  "tipo": {
+                    "id": 1,
+                    "descricao": "RESIDENCIAL",
+                    "ramalObrigatorio": false
+                  },
+                  "idEndereco": 663548,
+                  "dataInclusao": 1465570081000,
+                  "dataAlteracao": 1465926261000,
+                  "valid": true
+                },
+                "telefonesAdicionais": [{
+                  "idCliente": 574596,
+                  "id": 1001251,
+                  "ddd": 11,
+                  "numero": 23232323,
+                  "ramal": "123",
+                  "principal": "N",
+                  "tipo": {
+                    "id": 1,
+                    "descricao": "RESIDENCIAL",
+                    "ramalObrigatorio": false
+                  },
+                  "dataInclusao": 1465592590000,
+                  "dataAlteracao": 1465592603000,
+                  "valid": true
+                }]
+              }
+      400:
+        description: Houve um erro durante a execuÃ§Ã£o do mÃ©todo
+        body:
+          application/json:
+            example: |
+              {
+                "errors": [{
+                  "codigo": 999,
+                  "mensagem": "NÃ£o existe cliente com o ID informado. ID = 5745999",
+                  "p1": null
+                }]
+              }
+  /varios:
+    post:
+      headers:
+        Content-Type:
+          example: application/json
+      description:
+        O serviÃ§o de vÃ¡rios telefones permite que vocÃª gerencie manualmente, ou seja, inlcusÃ£o, alteraÃ§Ã£o e exclusÃ£o, de todos os telefones do cadastro de cliente, com a Ãºnica restriÃ§Ã£o de que um cadastro deve ter ao menos um telefone e o mesmo deve ser o principal
+      queryParameters:
+        aToken:
+          type: string
+          description: Define o token para a realizaÃ§Ã£o da consulta
+          example: 47c2f98b-5e2f-42a0-85a1-b6f63c65e5db
+          required: true
+        idEmpresa:
+          type: number
+          description: Define a empresa que estÃ¡ originando o cadastro, sendo Habib's[1] ou Ragazzo[2]
+          example: 1
+          required: true
+        idCliente:
+          type: number
+          description:  Define o id do cliente em questÃ£o
+          example: 574596
+          required: true
+      body:
+        application/json:
+          example: |
+            {
+              "telefonePrincipal": {
+                "idCliente": 574596,
+                "id": 1001542,
+                "ddd": 11,
+                "numero": 45454545,
+                "principal": "S",
+                "tipo": {
+                  "id": 1,
+                  "descricao": "RESIDENCIAL",
+                  "ramalObrigatorio": false
+                },
+                "dataInclusao": 1470684724000,
+                "valid": true
+              },
+              "telefonesAdicionais": [
+                {
+                  "idCliente": 574596,
+                  "id": 1001542,
+                  "ddd": 11,
+                  "numero": 45454545,
+                  "principal": "S",
+                  "tipo": {
+                    "id": 1,
+                    "descricao": "RESIDENCIAL",
+                    "ramalObrigatorio": false
+                  },
+                  "dataInclusao": 1470684724000,
+                  "valid": true
+                }
+              ]
+            }
+      responses:
+        200:
+          description: A chamada obteve sucesso
+          body:
+            application/json:
+              example: |
+                {
+                  "telefonePrincipal": {
+                    "idCliente": 574596,
+                    "id": 1001542,
+                    "ddd": 11,
+                    "numero": 45454545,
+                    "principal": "S",
+                    "tipo": {
+                      "id": 1,
+                      "descricao": "RESIDENCIAL",
+                      "ramalObrigatorio": false
+                    },
+                    "dataInclusao": 1470684724000,
+                    "valid": true
+                  },
+                  "telefonesAdicionais": [
+                    {
+                      "idCliente": 574596,
+                      "id": 1001542,
+                      "ddd": 11,
+                      "numero": 45454545,
+                      "principal": "S",
+                      "tipo": {
+                        "id": 1,
+                        "descricao": "RESIDENCIAL",
+                        "ramalObrigatorio": false
+                      },
+                      "dataInclusao": 1470684724000,
+                      "valid": true
+                    }
+                  ]
+                }
+        400:
+          description: Houve um erro durante a execuÃ§Ã£o do mÃ©todo
+          body:
+            application/json:
+              example: |
+                {
+                  "errors": [{
+                    "codigo": 999,
+                    "mensagem": "ParamÃªtro [idEmpresa] nÃ£o informado. Os parÃ¢metros [idEmpresa, idCliente] sÃ£o obrigatÃ³rios.",
+                    "p1": null
+                  }]
+                }
+/enderecos:
+  get:
+    description:
+      O serviÃ§o de endereÃ§os retorna todos os dados do endereÃ§o fornecido pelos campos definidos como obrigatÃ³rios no serviÃ§o de cidades. Deste mÃ©todo o dado mais importante Ã© o segmento pois serÃ¡ utilizado para consultar a loja de atendimento e todos os seus status.
+    queryParameters:
+      aToken:
+        type: string
+        description: Define o token para a realizaÃ§Ã£o da consulta
+        example: 47c2f98b-5e2f-42a0-85a1-b6f63c65e5db
+        required: true
+      idEmpresa:
+        type: number
+        description: Define a empresa que estÃ¡ originando o cadastro, sendo Habib's[1] ou Ragazzo[2]
+        example: 1
+        required: true
+      cep:
+        type: number
+        description: Define o CEP definido para a entrega do pedido
+        example: 00000998
+        required: false
+      numero:
+        type: number
+        description: Define o numero definido para a entrega do pedido
+        example: 2
+        required: false
+      quadra:
+        type: string
+        description: Define a quadra do endereÃ§o definido para a entrega do pedido para as cidades que utilizam este dado. Exemplo "2A"
+        required: false
+      logradouro:
+        type: string
+        description: Define o logradouro para a busca do endereÃ§o por nome da rua ao invÃ©s do CEP. Exemplo "RUA DO PEDIDO TESTE"
+        required: false
+        example: AV PRES JUSCELINO KUBITSCHEK
+      idCliente:
+        type: number
+        description: Se esse campo for declarado, o sistema retornarÃ¡ os endereÃ§os cadastrados co cliente
+        example: 574596
+        required: false
+      estado:
+        type: string
+        description: Define a UF do estado para a busca do endereÃ§o por nome da rua ao invÃ©s do CEP. [Apenas busca direta pelo lograd
+        example: SP
+        required: false
+      idCidade:
+        type: number
+        description: Define o id da cidade adquirido pela consulta de loja [Apenas busca direta pelo logradouro]
+        example: 37
+        required: false
+      nomeCidade:
+        type: string
+        description: Define o nome da cidade para a busca do endereÃ§o por nome da rua ao invÃ©s do CEP. [Apenas busca direta pelo logradouro]
+        required: false
+        example: SAO PAULO
+    responses:
+      200:
+        description: A chamada obteve sucesso
+        body:
+          application/json:
+            example: |
+              {
+                "pageCount": 1,
+                "data": [{
+                  "codStatus": "1",
+                  "numeroQuadrante": "X3",
+                  "uf": "SP",
+                  "orientacao": "",
+                  "descricaoWeb": "",
+                  "letraQuadrante": "Y1",
+                  "noSeg": "SEGVOX0000001",
+                  "descricao": "LIBERADO",
+                  "referencia": "",
+                  "numero": "1",
+                  "id": 0,
+                  "bairro": "JARDIM VOXLINE",
+                  "cidade": "SAO PAULO",
+                  "cep": "00000111",
+                  "quadraEsquerda": "",
+                  "tipo": {
+                    "id": 3
+                  },
+                  "logradouro": "RUA DO PEDIDO TESTE (FULL)",
+                  "quadraDireita": ""
+                }]
+              }
+      400:
+        description: Houve um erro durante a execuÃ§Ã£o do mÃ©todo
+        body:
+          application/json:
+            example: |
+              {
+                "errors": [{
+                  "codigo": 1029,
+                  "mensagem": "NÃ£o foi possÃ­vel efetuar a busca de endereÃ§os. Utilize mais campos para a busca!",
+                  "p1": null
+                }]
+              }
+  /alterarComplemento:
+    is: [ traits.Depreciado! ]
+    post:
+      headers:
+        Content-Type:
+          example: application/json
+      description:
+        O serviÃ§o de alterar complemento permite alterar o Ãºnico campo alterÃ¡vel do cadastro, o prÃ³prio complemento pelo cÃ³digo do cliente e o id do endereÃ§o
+      queryParameters:
+        aToken:
+          type: string
+          description: Define o token para a realizaÃ§Ã£o da consulta
+          example: 47c2f98b-5e2f-42a0-85a1-b6f63c65e5db
+          required: true
+        idEmpresa:
+          type: number
+          description: Define a empresa que estÃ¡ originando o cadastro, sendo Habib's[1] ou Ragazzo[2]
+          example: 1
+          required: true
+        idCliente:
+          type: number
+          description:  Define o id do cliente em questÃ£o
+          example: 574596
+          required: true
+        idEndereco:
+          type: number
+          description:  Define o id do endereÃ§o em questÃ£o
+          example: 663522
+          required: true
+        complemento:
+          type: string
+          description: Define o complemento a ser salvo no endereÃ§o. Deve ao menos ser enviado em branco.
+          example: AP. 306, BLOCO B
+          required: true
+      responses:
+        200:
+          description: A chamada obteve sucesso
+          body:
+            application/json:
+              example: |
+                {
+                  "codStatus": "1",
+                  "complemento": "AP. 306, BLOCO B",
+                  "numeroQuadrante": "X1",
+                  "uf": "SP",
+                  "orientacao": "",
+                  "descricaoWeb": "",
+                  "letraQuadrante": "Y1",
+                  "noSeg": "SEGVOX0000001",
+                  "descricao": "LIBERADO",
+                  "referencia": "",
+                  "numero": "1",
+                  "id": 663548,
+                  "bairro": "JARDIM VOXLINE",
+                  "cidade": "SAO PAULO",
+                  "exclusivo": false,
+                  "cep": "00000999",
+                  "quadraEsquerda": "",
+                  "tipo": {
+                    "id": 2,
+                    "descricao": "RESIDENCIAL"
+                  },
+                  "logradouro": "RUA DO PEDIDO TESTE (FULL)",
+                  "quadraDireita": ""
+                }
+        400:
+          description: Houve um erro durante a execuÃ§Ã£o do mÃ©todo
+          body:
+            application/json:
+              example: |
+                {
+                  "errors": [{
+                    "codigo": 999,
+                    "mensagem": "EndereÃ§o nÃ£o pertence ao cliente.",
+                    "p1": null
+                  }]
+                }
+  /loja:
+    get:
+      description:
+        O serviÃ§o de consulta Ã  loja retorna todos os dados de atendimento ao segmento informado, a fim de definir parÃ¢metros de busca dos mÃ©todos que precisam receber o cÃ³digo corporativo da loja.
+      queryParameters:
+        aToken:
+          type: string
+          description: Define o token para a realizaÃ§Ã£o da consulta
+          example: 47c2f98b-5e2f-42a0-85a1-b6f63c65e5db
+          required: true
+        idEmpresa:
+          type: number
+          description: Define a empresa que estÃ¡ originando o cadastro, sendo Habib's[1] ou Ragazzo[2]
+          example: 1
+          required: true
+        numSegmento:
+          type: string
+          description:  Define o nÃºmero do seguimento para o qual queremos buscar a loja de atendimento
+          example: SEGVOX0000001
+          required: true
+      responses:
+        200:
+          description: A chamada obteve sucesso
+          body:
+            application/json:
+              example: |
+                {
+                  "loja": {
+                    "ativaParaReceberPedidos": true,
+                    "possuiDelivery": true,
+                    "codCorporativo": "9999",
+                    "cnpj": "57.459.201/0001-79",
+                    "horarioDeliveryByNight": {
+                      "horaFechamento": "02:00",
+                      "horaAbertura": "23:30"
+                    },
+                    "descricao": "VOXLINE (HABIBS 1)",
+                    "bloqueadaPelaCentral": false,
+                    "id": 21,
+                    "bloqueadaParaPedidos": false,
+                    "horarioDelivery": {
+                      "horaFechamento": "23:30",
+                      "horaAbertura": "11:00"
+                    },
+                    "possuiDeliveryByNight": true,
+                    "telefone": {
+                      "ramal": null,
+                      "ddd": 11,
+                      "numero": 2221554
+                    },
+                    "horarioVerao": {
+                      "gmt": "-3",
+                      "descricao": "BRASILIA"
+                    },
+                    "endereco": {
+                      "cidade": {
+                        "id": 8841,
+                        "pais": 1,
+                        "uf": "SP",
+                        "nome": "SAO PAULO"
+                      },
+                      "bairro": "VILA ALMEIDA",
+                      "cep": "00445565",
+                      "complemento": "AO LADO DO SP MARKET",
+                      "logradouro": "AVENIDA DAS NAÃÃES UNIDAS",
+                      "numero": "22540"
+                    },
+                    "horarioConvencional": {
+                      "horaFechamento": "00:00",
+                      "horaAbertura": "00:00"
+                    }
+                  }
+                }
+        400:
+          description: Houve um erro durante a execuÃ§Ã£o do mÃ©todo
+          body:
+            application/json:
+              example: |
+                {
+                  "errors": [{
+                    "codigo": 999,
+                    "mensagem": "Endereco nÃ£o localizado para o segmento!",
+                    "p1": null
+                  }]
+                }
+/tiposTelefone:
+  get:
+    description:
+      O serviÃ§o de tipos de telefone retorna todas as categorias existentes e disponiveis para o cadastro de telefones do cliente, alÃ© de seus IDs para o serviÃ§o de cadastro em si.
+    queryParameters:
+      aToken:
+        type: string
+        description: Define o token para a realizaÃ§Ã£o da consulta
+        example: 47c2f98b-5e2f-42a0-85a1-b6f63c65e5db
+        required: true
+    responses:
+      200:
+        description: A chamada obteve sucesso
+        body:
+          application/json:
+            example: |
+              {
+                "tiposTelefone": [{
+                  "id": 1,
+                  "descricao": "RESIDENCIAL",
+                  "ramalObrigatorio": false
+                }, {
+                  "id": 2,
+                  "descricao": "COMERCIAL",
+                  "ramalObrigatorio": true
+                }, {
+                  "id": 3,
+                  "descricao": "CELULAR",
+                  "ramalObrigatorio": false
+                }, {
+                  "id": 4,
+                  "descricao": "FAX",
+                  "ramalObrigatorio": false
+                }, {
+                  "id": 7,
+                  "descricao": "OUTROS",
+                  "ramalObrigatorio": false
+                }]
+              }
+      400:
+        description: Houve um erro durante a execuÃ§Ã£o do mÃ©todo
+        body:
+          application/json:
+            example: |
+              {
+                "errors": [{
+                  "codigo": "9002",
+                  "mensagem": "NÃ£o foi encontrado o TOKEN informado. Ã necessÃ¡rio fazer o login e utilizar o token gerado."
+                }]
+              }
+/tiposEndereco:
+  get:
+    description:
+      O serviÃ§o de tipos de endereÃ§o retorna todas as categorias existentes e disponiveis para o cadastro de endereÃ§os do cliente, alÃ© de seus IDs para o serviÃ§o de cadastro em si.
+    queryParameters:
+      aToken:
+        type: string
+        description: Define o token para a realizaÃ§Ã£o da consulta
+        example: 47c2f98b-5e2f-42a0-85a1-b6f63c65e5db
+        required: true
+      idEmpresa:
+        type: number
+        description: Define a empresa que estÃ¡ originando o cadastro, sendo Habib's[1] ou Ragazzo[2]
+        example: 1
+        required: true
+    responses:
+      200:
+        description: A chamada obteve sucesso
+        body:
+          application/json:
+            example: |
+              {
+                "tiposEndereco": [{
+                  "id": 1,
+                  "descricao": "COMERCIAL"
+                }, {
+                  "id": 2,
+                  "descricao": "RESIDENCIAL"
+                }, {
+                  "id": 3,
+                  "descricao": "OUTROS"
+                }, {
+                  "id": 4,
+                  "descricao": "ENTREGA"
+                }]
+              }
+      400:
+        description: Houve um erro durante a execuÃ§Ã£o do mÃ©todo
+        body:
+          application/json:
+            example: |
+              {
+                "errors": [{
+                  "codigo": 999,
+                  "mensagem": "ParamÃªtro [idEmpresa] nÃ£o informado. Os parÃ¢metros [idEmpresa] sÃ£o obrigatÃ³rios.",
+                  "p1": null
+                }]
+              }
+/cidades:
+  get:
+    description:
+      O serviÃ§o de cidades retorna dentre outras coisas, os dados necessÃ¡rios para a segunda etapa da consulta, ou seja, se a consulta de loja exige o numero, ou o logradouro, ou a quadra, etc. E se qualquer um destes Ã© obrigatÃ³rio o preenchimento.
+    queryParameters:
+      aToken:
+        type: string
+        description: Define o token para a realizaÃ§Ã£o da consulta
+        example: 47c2f98b-5e2f-42a0-85a1-b6f63c65e5db
+        required: true
+      idEmpresa:
+        type: number
+        description: Define a empresa que estÃ¡ originando o cadastro, sendo Habib's[1] ou Ragazzo[2]
+        example: 1
+        required: true
+      cep:
+        type: number
+        description: Define o CEP para o qual se deseja atendimento
+        example: 00000111
+        required: true
+    responses:
+      200:
+        description: A chamada obteve sucesso
+        body:
+          application/json:
+            example: |
+              {
+                "cidades": {
+                  "id": 212,
+                  "cidade": "SAO PAULO",
+                  "uf": "SP",
+                  "opcoesDeBusca": {
+                    "cep": true,
+                    "numero": true,
+                    "logradouro": true,
+                    "quadra": false,
+                    "cepObrigatorio": false,
+                    "numeroObrigatorio": true,
+                    "logradouroObrigatorio": false,
+                    "quadraObrigatoria": false
+                  },
+                  "cpfCupom": true
+                }
+              }
+      400:
+        description: Houve um erro durante a execuÃ§Ã£o do mÃ©todo
+        body:
+          application/json:
+            example: |
+              {
+                "errors": [{
+                  "codigo": 1044,
+                  "mensagem": "A busca por CEP[00000888] nÃ£o encontrou nenhuma cidade!",
+                  "p1": "00000888"
+                }]
+              }
+/tiposComplementos:
+  is: [ traits.Novo! ]
+  get:
+    description:
+      Lista todos os tipos de complemento
+    queryParameters:
+      aToken:
+        type: string
+        description: Define o token para a realizaÃ§Ã£o da consulta
+        example: 47c2f98b-5e2f-42a0-85a1-b6f63c65e5db
+        required: true
+      idEmpresa:
+        type: number
+        description: Define a empresa que estÃ¡ originando o cadastro, sendo Habib's[1] ou Ragazzo[2]
+        example: 1
+        required: true
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {
+                "tiposComplementos": [{
+                  "id": 2,
+                  "descricao": "APARTAMENTO",
+                  "config": [{
+                    "id": 15,
+                    "chave": "PONTO_REFERENCIA",
+                    "visivel": true,
+                    "obrigatorio": false,
+                    "ajuda": "INFORMAR PONTO DE REFERENCIA",
+                    "nomeCampo": "Ponto de ReferÃªncia",
+                    "descricao": "PONTO DE REFERÃNCIA:",
+                    "maxLength": 255
+                  }, {
+                    "id": 14,
+                    "chave": "COMPLEMENTO",
+                    "visivel": true,
+                    "obrigatorio": false,
+                    "ajuda": "INFORMAR NOME DO EDIFICIO E NUMERO DO APARTAMENTO",
+                    "nomeCampo": "Complemento",
+                    "descricao": "NOME EDIFICIO / NUMERO DO APARTAMENTO",
+                    "maxLength": 255
+                  }, {
+                    "id": 10,
+                    "chave": "NUMERO_PORTARIA",
+                    "visivel": true,
+                    "obrigatorio": false,
+                    "ajuda": "INFORMAR NÃMERO DA PORTARIA",
+                    "nomeCampo": "NÃºmero da Portaria",
+                    "descricao": "PORTARIA:",
+                    "maxLength": 10
+                  }]
+                }, {
+                  "id": 1,
+                  "descricao": "CASA",
+                  "config": [{
+                    "id": 2,
+                    "chave": "PONTO_REFERENCIA",
+                    "visivel": true,
+                    "obrigatorio": false,
+                    "ajuda": "INFORMAR PONTO DE REFERENCIA",
+                    "nomeCampo": "Ponto de ReferÃªncia",
+                    "descricao": "PONTO DE REFERÃNCIA:",
+                    "maxLength": 255
+                  }, {
+                    "id": 1,
+                    "chave": "COMPLEMENTO",
+                    "visivel": true,
+                    "obrigatorio": false,
+                    "ajuda": "INFORMAR O COMPLEMENTO DO ENDERECO",
+                    "nomeCampo": "Complemento",
+                    "descricao": "COMPLEMENTO:",
+                    "maxLength": 255
+                  }]
+                }, {
+                  "id": 3,
+                  "descricao": "EMPRESA",
+                  "config": [{
+                    "id": 25,
+                    "chave": "OUTRO_TELEFONE",
+                    "visivel": true,
+                    "obrigatorio": false,
+                    "ajuda": "INFORMAR TELEFONE ALTERNATIVO",
+                    "nomeCampo": "Outro Telefone",
+                    "descricao": "TELEFONE ALTERNATIVO:",
+                    "maxLength": 20
+                  }, {
+                    "id": 24,
+                    "chave": "PONTO_REFERENCIA",
+                    "visivel": true,
+                    "obrigatorio": false,
+                    "ajuda": "INFORMAR PONTO DE REFERENCIA",
+                    "nomeCampo": "Ponto de ReferÃªncia",
+                    "descricao": "PONTO DE REFERÃNCIA:",
+                    "maxLength": 255
+                  }, {
+                    "id": 23,
+                    "chave": "COMPLEMENTO",
+                    "visivel": true,
+                    "obrigatorio": false,
+                    "ajuda": "INFORMAR COMPLEMENTO",
+                    "nomeCampo": "Complemento",
+                    "descricao": "COMPLEMENTO:",
+                    "maxLength": 255
+                  }, {
+                    "id": 19,
+                    "chave": "NUMERO_PORTARIA",
+                    "visivel": true,
+                    "obrigatorio": false,
+                    "ajuda": "INFORMAR O NOME DA PORTARIA",
+                    "nomeCampo": "NÃºmero da Portaria",
+                    "descricao": "NOME OU NUMERO PORTARIA:",
+                    "maxLength": 10
+                  }, {
+                    "id": 17,
+                    "chave": "NOME_EMPRESA",
+                    "visivel": true,
+                    "obrigatorio": true,
+                    "ajuda": "INFORMAR O NOME DA EMPRESA",
+                    "nomeCampo": "Nome da Empresa",
+                    "descricao": "EMPRESA:",
+                    "maxLength": 100
+                  }, {
+                    "id": 26,
+                    "chave": "SETOR_DEPARTAMENTO_QUARTO",
+                    "visivel": true,
+                    "obrigatorio": true,
+                    "ajuda": "INFORMAR DEPARTAMENTO",
+                    "nomeCampo": "Setor/Departamento - Quarto",
+                    "descricao": "DEPARTAMENTO:",
+                    "maxLength": 100
+                  }]
+                }, {
+                  "id": 4,
+                  "descricao": "ESCOLA",
+                  "config": [{
+                    "id": 37,
+                    "chave": "FUNCIONARIO",
+                    "visivel": true,
+                    "obrigatorio": true,
+                    "ajuda": "INFORMAR SE Ã FUNCIONARIO DA ESCOLA",
+                    "nomeCampo": "FuncionÃ¡rio",
+                    "descricao": "FUNCIONÃRIO DA ESCOLA?",
+                    "maxLength": 5
+                  }, {
+                    "id": 36,
+                    "chave": "SETOR_DEPARTAMENTO_QUARTO",
+                    "visivel": true,
+                    "obrigatorio": false,
+                    "ajuda": "INFORMAR DEPARTAMENTO OU CURSO",
+                    "nomeCampo": "Setor/Departamento - Quarto",
+                    "descricao": "DEPARTAMENTO OU CURSO:",
+                    "maxLength": 100
+                  }, {
+                    "id": 35,
+                    "chave": "OUTRO_TELEFONE",
+                    "visivel": true,
+                    "obrigatorio": false,
+                    "ajuda": "TELEFONE ALTERNATIVO",
+                    "nomeCampo": "Outro Telefone",
+                    "descricao": "TELEFONE:",
+                    "maxLength": 20
+                  }, {
+                    "id": 34,
+                    "chave": "PONTO_REFERENCIA",
+                    "visivel": true,
+                    "obrigatorio": false,
+                    "ajuda": "INFORMAR PONTO DE REFERENCIA",
+                    "nomeCampo": "Ponto de ReferÃªncia",
+                    "descricao": "PONTO DE REFERENCIA:",
+                    "maxLength": 255
+                  }, {
+                    "id": 33,
+                    "chave": "COMPLEMENTO",
+                    "visivel": true,
+                    "obrigatorio": false,
+                    "ajuda": "INFORMAR COMPLEMENTO",
+                    "nomeCampo": "Complemento",
+                    "descricao": "COMPLEMENTO:",
+                    "maxLength": 255
+                  }, {
+                    "id": 29,
+                    "chave": "NUMERO_PORTARIA",
+                    "visivel": true,
+                    "obrigatorio": false,
+                    "ajuda": "INFORMAR NUMERO DA PORTARIA",
+                    "nomeCampo": "NÃºmero da Portaria",
+                    "descricao": "PORTARIA:",
+                    "maxLength": 10
+                  }, {
+                    "id": 27,
+                    "chave": "NOME_EMPRESA",
+                    "visivel": true,
+                    "obrigatorio": true,
+                    "ajuda": "INFORMAR O NOME DA ESCOLA",
+                    "nomeCampo": "Nome da Empresa",
+                    "descricao": "ESCOLA:",
+                    "maxLength": 100
+                  }]
+                }, {
+                  "id": 5,
+                  "descricao": "HOSPITAL/HOTEL",
+                  "config": [{
+                    "id": 48,
+                    "chave": "FUNCIONARIO",
+                    "visivel": true,
+                    "obrigatorio": false,
+                    "ajuda": "INFORMAR SE Ã FUNCIONARIO DO HOSPITAL/HOTEL",
+                    "nomeCampo": "FuncionÃ¡rio",
+                    "descricao": "FUNCIONÃRIO?",
+                    "maxLength": 5
+                  }, {
+                    "id": 47,
+                    "chave": "SETOR_DEPARTAMENTO_QUARTO",
+                    "visivel": true,
+                    "obrigatorio": true,
+                    "ajuda": "INFORMAR DEPARTAMENTO OU QUARTO",
+                    "nomeCampo": "Setor/Departamento - Quarto",
+                    "descricao": "DEPARTAMENTO OU QUARTO",
+                    "maxLength": 100
+                  }, {
+                    "id": 46,
+                    "chave": "OUTRO_TELEFONE",
+                    "visivel": true,
+                    "obrigatorio": false,
+                    "ajuda": "TELEFONE ALTERNATIVO DE CONTATO",
+                    "nomeCampo": "Outro Telefone",
+                    "descricao": "TELEFONE:",
+                    "maxLength": 20
+                  }, {
+                    "id": 45,
+                    "chave": "PONTO_REFERENCIA",
+                    "visivel": true,
+                    "obrigatorio": false,
+                    "ajuda": "INFORMAR PONTO DE REFERENCIA",
+                    "nomeCampo": "Ponto de ReferÃªncia",
+                    "descricao": "PONTO DE REFERENCIA:",
+                    "maxLength": 255
+                  }, {
+                    "id": 44,
+                    "chave": "COMPLEMENTO",
+                    "visivel": true,
+                    "obrigatorio": false,
+                    "ajuda": "INFORMAR COMPLEMENTO",
+                    "nomeCampo": "Complemento",
+                    "descricao": "COMPLEMENTO:",
+                    "maxLength": 255
+                  }, {
+                    "id": 43,
+                    "chave": "ANDAR",
+                    "visivel": true,
+                    "obrigatorio": false,
+                    "ajuda": "INFORMAR ANDAR",
+                    "nomeCampo": "Andar",
+                    "descricao": "ANDAR:",
+                    "maxLength": 4
+                  }, {
+                    "id": 40,
+                    "chave": "NUMERO_PORTARIA",
+                    "visivel": true,
+                    "obrigatorio": false,
+                    "ajuda": "INFORMAR NUMERO DA PORTARIA",
+                    "nomeCampo": "NÃºmero da Portaria",
+                    "descricao": "PORTARIA:",
+                    "maxLength": 10
+                  }, {
+                    "id": 38,
+                    "chave": "NOME_EMPRESA",
+                    "visivel": true,
+                    "obrigatorio": true,
+                    "ajuda": "INFORMAR O NOME DO HOSPITAL",
+                    "nomeCampo": "Nome da Empresa",
+                    "descricao": "HOSPITAL/HOTEL:",
+                    "maxLength": 100
+                  }]
+                }]
+              }
