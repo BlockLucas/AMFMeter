@@ -1,7 +1,7 @@
 package org.mule.amf
 
 import amf.AMF
-import amf.model.document.BaseUnit
+import amf.client.model.document.BaseUnit
 import amf.validation.{AMFValidationReport, AMFValidationResult}
 import org.mule.core.Specs.APIType
 

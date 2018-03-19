@@ -1,7 +1,7 @@
 package org.mule.amf
 
+import amf.client.model.document.BaseUnit
 import amf.core.client.Resolver
-import amf.model.document.BaseUnit
 import org.mule.core.Specs.APIType
 
 object AmfResolutionHelper {

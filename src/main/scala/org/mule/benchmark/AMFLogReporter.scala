@@ -12,30 +12,29 @@ case class AMFLogReporter[T]() extends Reporter[T] {
   def report(result: CurveData[T], persistor: Persistor) {
     // output context
     log(s"::::Benchmark ${result.context.scope}::::")
-    log(s"\t::Machine Data::")
+    log(s"::Machine Data::")
     val machineKeys = result.context.properties
       .filterKeys(Context.machine.properties.keySet.contains).toSeq.sortBy(_._1)
     for ((key, value) <- machineKeys) {
-      log(s"\t\t$key: $value")
+      log(s"$key: $value")
     }
     log("")
-    log(s"\t::Depedencies Data::")
+    log(s"::Depedencies Data::")
     val amfVersion = DependenciesUtils.getDependencyVersion("amf-client")
-    log(s"\t\tamfVersion: $amfVersion")
+    log(s"amfVersion: $amfVersion")
     log("")
 
-    log(s"\t::Measurements Data::")
+    log(s"::Measurements Data::")
     // output measurements
     for (measurement <- result.measurements) {
-      log(s"\t\t${measurement.params}: ")
-      log(s"\t\tExecutions: ${measurement.data.complete.size}")
-      log(s"\t\tTime: ${measurement.value} ${measurement.units}")
-      log(s"\t\tAll Times: ${measurement.complete.mkString(",")}")
+      log(s"${measurement.params}: ")
+      log(s"Executions: ${measurement.data.complete.size}")
+      log(s"Time: ${measurement.value.asInstanceOf[Double].toLong} ${measurement.units}")
+      log(s"All Times: {${measurement.complete.map(_.asInstanceOf[Double].toLong).mkString(", ")}}")
+      log("")
     }
 
     // add a new line
-    log("")
-    log("")
     log("")
     log("")
   }

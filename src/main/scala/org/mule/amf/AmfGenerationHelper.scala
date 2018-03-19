@@ -2,7 +2,7 @@ package org.mule.amf
 
 import java.io.File
 
-import amf.model.document.BaseUnit
+import amf.client.model.document.BaseUnit
 import org.mule.core.Specs.APIType
 
 object AmfGenerationHelper {
