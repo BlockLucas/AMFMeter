@@ -2,9 +2,9 @@ package org.mule.amf
 
 import java.io.File
 
-import amf.client.model.document.BaseUnit
 import amf.core.client.ParsingOptions
 import amf.core.remote.JvmPlatform
+import amf.model.document.BaseUnit
 import org.mule.core.Specs.APIType
 
 object AmfParsingHelper{

@@ -1,6 +1,6 @@
 //val ivyLocal = Resolver.file("ivy", file(Path.userHome.absolutePath + "/.ivy2/local"))(Resolver.ivyStylePatterns)
 
-val amfVersion = "1.3.0-SNAPSHOT"
+val amfVersion = "1.1.0"
 
 initialize := {
   val _ = initialize.value
