@@ -38,7 +38,7 @@ object AmfObjectsHandler {
   def createResolver(apiType: APIType): Resolver = {
     apiType match {
       case RAML10 => new Raml10Resolver()
-      case RAML08 => new Raml08Resolver()
+      case RAML08 => new Raml10Resolver()
       case OAS20 => new Oas20Resolver()
       case JSON_LD => new AmfGraphResolver()
       case _ => throw new IllegalArgumentException()
