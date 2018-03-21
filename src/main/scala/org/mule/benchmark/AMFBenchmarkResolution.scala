@@ -3,7 +3,7 @@ package org.mule.benchmark
 import java.io.File
 
 import amf.AMF
-import amf.client.model.document.BaseUnit
+import amf.model.document.BaseUnit
 import org.mule.amf.{AmfParsingHelper, AmfResolutionHelper}
 import org.mule.core.Specs
 import org.scalameter.api._
