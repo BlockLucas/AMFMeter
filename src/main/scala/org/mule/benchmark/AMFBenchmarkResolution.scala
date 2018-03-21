@@ -27,11 +27,13 @@ object AMFBenchmarkResolution
 
   val inputFile: Gen[String] = Gen.enumeration("inputFile")(
     "src/main/resources/raml08/only_title.raml",
-    "src/main/resources/raml10/only_title.raml",
-    "src/main/resources/raml08/longest_valid_platform.raml",
-    "src/main/resources/raml10/longest_valid_platform.raml",
-    "src/main/resources/raml08/longest_platform.raml",
-    "src/main/resources/raml10/longest_platform.raml")
+    //    "src/main/resources/raml08/longest_valid_platform.raml",
+    //    "src/main/resources/raml10/longest_valid_platform.raml",
+    "src/main/resources/raml10/longest_valid_tck.raml",
+    "src/main/resources/raml08/longest_valid_tck.raml",
+    //    "src/main/resources/raml08/longest_platform.raml",
+    //    "src/main/resources/raml10/longest_platform.raml",
+    "src/main/resources/raml10/only_title.raml")
 
   /* initialization */
   AMF.init().get()
