@@ -29,12 +29,12 @@ object AMFBenchmarkParse
 
   val inputFile: Gen[String] = Gen.enumeration("inputFile")(
     "src/main/resources/raml08/only_title.raml",
-    //    "src/main/resources/raml08/longest_valid_platform.raml",
-    //    "src/main/resources/raml10/longest_valid_platform.raml",
+    "src/main/resources/raml08/longest_valid_platform.raml",
+    "src/main/resources/raml10/longest_valid_platform.raml",
     "src/main/resources/raml10/longest_valid_tck.raml",
     "src/main/resources/raml08/longest_valid_tck.raml",
-    //    "src/main/resources/raml08/longest_platform.raml",
-    //    "src/main/resources/raml10/longest_platform.raml",
+    "src/main/resources/raml08/longest_platform.raml",
+    "src/main/resources/raml10/longest_platform.raml",
     "src/main/resources/raml10/only_title.raml")
 
   /* initialization */
@@ -60,12 +60,7 @@ object AMFBenchmarkParse
     val apiKind = Specs.getApiKind(file)
     AmfParsingHelper.handleParse(file, apiKind) match {
       case Right(_) => // do nothing
-      case Left(e) => println(s"AMF PARSING ERROR: ${e.getMessage}", e)
+      case Left(e) => AMFBenchmarkCommon.printError(s"AMF PARSING ERROR: ${e.getMessage}", e, file)
     }
-  }
-
-  private def printAndThrow(string: String, e: Throwable): Unit = {
-    println(string)
-    throw e
   }
 }
