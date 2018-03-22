@@ -1,0 +1,101 @@
+#%RAML 1.0 Dialect
+
+# Name of the dialect, this will define the header of the dialect documents
+dialect: TCKutor
+version: 0.1
+
+uses:
+ tckutor: ../vocabulary/tckutor.raml
+
+external:
+ schema-org: http://schema.org/
+
+documents:
+  root:
+    encodes: ReportNode
+
+nodeMappings:
+  ReportNode:
+    classTerm: tckutor.Report
+    mapping:
+      uuid:
+        propertyTerm: tckutor.uuid
+        mandatory: true
+        range: string
+      tags:
+        propertyTerm: tckutor.tags
+        mandatory: false
+        allowMultiple: true
+        range: string
+      date:
+        propertyTerm: tckutor.date
+        mandatory: true
+        range: date
+      amfVersion:
+        propertyTerm: tckutor.amfVersion
+        mandatory: true
+        range: string
+      units:
+        propertyTerm: tckutor.units
+        mandatory: true
+        mapKey: tckutor.sha
+        range: ReportUnitNode
+
+  ReportUnitNode:
+    classTerm: tckutor.ReportUnit
+    mapping:
+      sha:
+        propertyTerm: tckutor.sha
+        mandatory: true
+        range: string
+      path:
+        propertyTerm: tckutor.path
+        mandatory: true
+        range: string
+      spec:
+        propertyTerm: tckutor.spec
+        mandatory: true
+        range: string
+      results:
+        propertyTerm: tckutor.results
+        mandatory: false
+        allowMultiple: true
+        mapKey: tckutor.aspect
+        range: ReportResultNode
+
+  ReportResultNode:
+    classTerm: tckutor.ReportResult
+    mapping:
+      aspect:
+        propertyTerm: tckutor.aspect
+        mandatory: true
+        range: string
+      time:
+        propertyTerm: tckutor.time
+        mandatory: false
+        range: integer
+      success:
+        propertyTerm: tckutor.success
+        mandatory: true
+        range: boolean
+      info:
+        propertyTerm: tckutor.info
+        mandatory: false
+        range: string
+      messages:
+        propertyTerm: tckutor.messages
+        mandatory: false
+        allowMultiple: true
+        range: ResultMessageNode
+
+  ResultMessageNode:
+    classTerm: tckutor.ResultMessage
+    mapping:
+      kind:
+        propertyTerm: tckutor.kind
+        mandatory: true
+        range: string
+      content:
+        propertyTerm: tckutor.content
+        mandatory: true
+        range: string

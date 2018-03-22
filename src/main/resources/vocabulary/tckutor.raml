@@ -1,0 +1,135 @@
+#%RAML 1.0 Vocabulary
+
+# Name of the vocabulary
+vocabulary: TCKutor
+usage: TCKUtor @ MuleSoft
+
+# Namespace for the vocabulary (must be a URI prefix)
+# All terms in the vocabulary will be URIs in this namespace
+base: http://mulesoft.com/vocabularies/tckutor#
+
+external:
+ schema-org: http://schema.org/
+
+classTerms:
+
+  # URI for this term: http://mulesoft.com/vocabularies/tckutor#Report
+  Report:
+    displayName: Report
+    description: Report
+    properties:
+      - uuid
+      - tags
+      - date
+      - amfVersion
+      - units
+
+  ReportUnit:
+    displayName: Report Unit
+    description: The report unit
+    properties:
+      - sha
+      - path
+      - spec
+      - results
+
+  ReportResult:
+    displayName: Report Result
+    description: The report result
+    properties:
+      - aspect
+      - time
+      - success
+      - info
+      - messages
+
+  ResultMessage:
+    displayName: Result Message
+    description: The result message
+    properties:
+      - kind    #Exception, Error, Warning or Info
+      - content
+
+
+propertyTerms:
+
+  uuid:
+    displayName: uuid
+    description: uuid
+    range: string
+
+  tags:
+    displayName: tags
+    description: tags
+    range: string
+
+  date:
+    displayName: date
+    description: Date of the execution
+    extends: schema-org.dateCreated
+    range: date
+
+  amfVersion:
+    displayName: amfVersion
+    description: amf version
+    range: string
+
+  units:
+    displayName: report units
+    description: list of Report Units
+    range: ReportUnit
+
+  sha:
+    displayName: sha
+    description: sha of the file content
+    range: string
+
+  path:
+    displayName: path
+    description: path of the file
+    range: string
+
+  spec:
+    displayName: spec
+    description: spec of the API    #RAML10, RAML08, OAS20, OAS30
+    range: string
+
+  results:
+    displayName: results
+    description: list of Report Results
+    range: ReportResult
+
+  aspect:
+    displayName: aspect
+    description: Aspect
+    range: string
+
+  time:
+    displayName: time
+    description: time spent doing the operation
+    range: integer
+
+  success:
+    displayName: success
+    description: success
+    range: boolean
+
+  info:
+    displayName: info
+    description: info
+    range: string
+
+  messages:
+    displayName: messages
+    description: list of Result Messages
+    range: ResultMessage
+
+  kind:
+    displayName: kind
+    description: kind of the message
+    range: string
+
+  content:
+    displayName: content
+    description: content of the message
+    range: string
