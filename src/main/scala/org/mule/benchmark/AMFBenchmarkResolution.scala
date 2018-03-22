@@ -44,6 +44,7 @@ object AMFBenchmarkResolution
     measure method "resolution" in {
       using(inputFile) config (
         exec.benchRuns -> 3,
+        exec.maxWarmupRuns -> 3,
       ) in {
         f => testResolution(f)
       }

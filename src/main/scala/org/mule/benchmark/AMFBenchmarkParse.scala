@@ -46,6 +46,7 @@ object AMFBenchmarkParse
     measure method "parseFileAsync" in {
       using(inputFile) config (
         exec.benchRuns -> 3,
+        exec.maxWarmupRuns -> 3,
       ) in {
         f => testParse(f)
       }

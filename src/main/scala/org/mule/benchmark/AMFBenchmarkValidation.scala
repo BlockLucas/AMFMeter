@@ -46,6 +46,7 @@ object AMFBenchmarkValidation
     measure method "validate" in {
       using(inputFile) config (
         exec.benchRuns -> 3,
+        exec.maxWarmupRuns -> 3,
       ) in {
         f => testValidation(f)
       }
