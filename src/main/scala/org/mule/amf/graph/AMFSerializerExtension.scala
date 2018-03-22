@@ -1,7 +1,7 @@
 package org.mule.amf.graph
 
 import amf.AMF
-import amf.client.model.document.BaseUnit
+import amf.model.document.BaseUnit
 import amf.core.unsafe.PlatformSecrets
 
 trait AMFSerializerExtension extends PlatformSecrets { this: KnowledgeBase =>
