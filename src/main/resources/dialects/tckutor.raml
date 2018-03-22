@@ -10,8 +10,8 @@ uses:
 external:
  schema-org: http://schema.org/
 
-documents:
-  root:
+raml:
+  document:
     encodes: ReportNode
 
 nodeMappings:
@@ -38,7 +38,8 @@ nodeMappings:
       units:
         propertyTerm: tckutor.units
         mandatory: true
-        mapKey: tckutor.sha
+        allowMultiple: true
+        hash: tckutor.sha
         range: ReportUnitNode
 
   ReportUnitNode:
@@ -60,7 +61,7 @@ nodeMappings:
         propertyTerm: tckutor.results
         mandatory: false
         allowMultiple: true
-        mapKey: tckutor.aspect
+        hash: tckutor.aspect
         range: ReportResultNode
 
   ReportResultNode:
@@ -73,7 +74,7 @@ nodeMappings:
       time:
         propertyTerm: tckutor.time
         mandatory: false
-        range: integer
+        range: number
       success:
         propertyTerm: tckutor.success
         mandatory: true
@@ -98,4 +99,4 @@ nodeMappings:
       content:
         propertyTerm: tckutor.content
         mandatory: true
-        range: string
+        range: number

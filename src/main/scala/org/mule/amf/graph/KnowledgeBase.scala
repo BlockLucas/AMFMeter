@@ -7,7 +7,7 @@ import java.util
 import amf.AMF
 import amf.core.unsafe.PlatformSecrets
 import amf.core.vocabulary.Namespace
-import amf.client.model.document.BaseUnit
+import amf.model.document.BaseUnit
 import org.apache.commons.io.IOUtils
 import org.apache.jena.query._
 import org.apache.jena.rdf.model.{Model, ModelFactory, RDFNode, Resource, Statement, Literal => JLiteral}
