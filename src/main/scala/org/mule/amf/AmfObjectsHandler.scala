@@ -1,7 +1,9 @@
 package org.mule.amf
 
 import amf._
-import amf.core.client.{Generator, Parser, Resolver}
+import amf.client.parse._
+import amf.client.render.Renderer
+import amf.client.resolve._
 import org.mule.core.Specs._
 
 object AmfObjectsHandler {
@@ -25,7 +27,7 @@ object AmfObjectsHandler {
     }
   }
 
-  def createGenerator(apiType: APIType): Generator = {
+  def createGenerator(apiType: APIType): Renderer = {
     apiType match {
       case RAML10 => AMF.raml10Generator()
       case RAML08 => AMF.raml08Generator()

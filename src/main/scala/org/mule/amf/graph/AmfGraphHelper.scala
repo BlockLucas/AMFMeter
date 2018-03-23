@@ -2,7 +2,7 @@ package org.mule.amf.graph
 
 import java.io.File
 
-import amf.Raml10Parser
+import amf.client.parse.Raml10Parser
 
 object AmfGraphHelper{
 

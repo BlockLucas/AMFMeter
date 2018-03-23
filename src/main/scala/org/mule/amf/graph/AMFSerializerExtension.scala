@@ -22,8 +22,8 @@ trait AMFSerializerExtension extends PlatformSecrets { this: KnowledgeBase =>
     val model = buildBaseUnit(documentUrl)
 
     vendor match {
-      case "RAML 1.0" => AMF.raml10Generator().generateString(model)// new AMFSerializer(model, "application/yaml", "RAML 1.0", GenerationOptions()).dumpToString
-      case "OAS 2.0"  => AMF.oas20Generator().generateString(model) // new AMFSerializer(model, "application/json", "OAS 2.0", GenerationOptions()).dumpToString
+      case "RAML 1.0" => AMF.raml10Generator().generateString(model).get()// new AMFSerializer(model, "application/yaml", "RAML 1.0", GenerationOptions()).dumpToString
+      case "OAS 2.0"  => AMF.oas20Generator().generateString(model).get() // new AMFSerializer(model, "application/json", "OAS 2.0", GenerationOptions()).dumpToString
       case _          => throw new Exception(s"Unknown document $vendor")
     }
   }

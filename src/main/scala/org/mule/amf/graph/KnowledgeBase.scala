@@ -173,8 +173,8 @@ class KnowledgeBase(val base: String) extends AMFSerializerExtension {
     val unit = AMF.amfGraphParser().parseStringAsync(fixedJson).get()
 
     val str = uri.substring(uri.lastIndexOf(".")) match {
-      case ".raml" => AMF.raml10Generator().generateString(unit)
-      case ".json" => AMF.oas20Generator().generateString(unit)
+      case ".raml" => AMF.raml10Generator().generateString(unit).get()
+      case ".json" => AMF.oas20Generator().generateString(unit).get()
       case _ => throw new Exception(s"Unknown document $uri")
     }
 
@@ -533,7 +533,7 @@ class KnowledgeBase(val base: String) extends AMFSerializerExtension {
     }
   }
 
-  protected def jsonld(model: BaseUnit): String = AMF.amfGraphGenerator().generateString(model)
+  protected def jsonld(model: BaseUnit): String = AMF.amfGraphGenerator().generateString(model).get()
 }
 
 object KnowledgeBase extends PlatformSecrets {
