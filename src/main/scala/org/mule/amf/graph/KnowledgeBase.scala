@@ -4,7 +4,7 @@ import java.io.{File, FileInputStream, PrintWriter}
 import java.nio.charset.Charset
 import java.util
 
-import amf.AMF
+import amf.client.AMF
 import amf.core.unsafe.PlatformSecrets
 import amf.core.vocabulary.Namespace
 import amf.client.model.document.BaseUnit

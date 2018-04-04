@@ -2,7 +2,7 @@ package org.mule.benchmark
 
 import java.io.File
 
-import amf.AMF
+import amf.client.AMF
 import amf.client.model.document.BaseUnit
 import org.mule.amf.{AmfParsingHelper, AmfValidationHelper}
 import org.mule.core.Specs

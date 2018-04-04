@@ -1,5 +1,6 @@
 package org.mule.benchmark
 
+import amf.core.benchmark.ExecutionLog
 import org.mule.util.DependenciesUtils
 import org.scalameter._
 import org.scalameter.utils.Tree
@@ -37,6 +38,9 @@ case class AMFLogReporter[T]() extends Reporter[T] {
     // add a new line
     log("")
     log("")
+
+//    log(s"::::Benchmark Tony: ${result.context.scope}::::")
+//    ExecutionLog.buildReport
   }
 
   def report(result: Tree[CurveData[T]], persistor: Persistor) = true

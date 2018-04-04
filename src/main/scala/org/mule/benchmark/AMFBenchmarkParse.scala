@@ -2,7 +2,7 @@ package org.mule.benchmark
 
 import java.io.File
 
-import amf.AMF
+import amf.client.AMF
 import org.mule.amf.AmfParsingHelper
 import org.mule.core.Specs
 import org.scalameter.Bench.LocalTime

@@ -1,6 +1,7 @@
 package org.mule.amf
 
 import amf._
+import amf.client.AMF
 import amf.client.parse._
 import amf.client.render.Renderer
 import amf.client.resolve._

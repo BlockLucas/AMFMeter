@@ -2,7 +2,7 @@ package org.mule.benchmark
 
 import java.io.File
 
-import amf.AMF
+import amf.client.AMF
 import org.mule.amf.graph.AmfGraphHelper
 import org.scalameter.Bench.LocalTime
 import org.scalameter.api._
@@ -33,7 +33,7 @@ object AMFBenchmarkGraphLoad
   AMF.init().get()
   val dialectDir = new File("src/main/resources/dialects")
   val dialectFile = new File(dialectDir, "tckutor.raml")
-  amf.AMF.registerDialect("file://" + dialectFile.getAbsolutePath).get()
+  AMF.registerDialect("file://" + dialectFile.getAbsolutePath).get()
 
   /* tests */
 

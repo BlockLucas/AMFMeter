@@ -1,6 +1,6 @@
 //val ivyLocal = Resolver.file("ivy", file(Path.userHome.absolutePath + "/.ivy2/local"))(Resolver.ivyStylePatterns)
 
-val amfVersion = "1.3.0-SNAPSHOT"
+val amfVersion = "1.4.0-SNAPSHOT"
 
 initialize := {
   val _ = initialize.value
@@ -14,7 +14,9 @@ val settings = Common.settings ++ Seq(
 
   libraryDependencies ++= Seq(
     "org.mule.amf" %% "amf-client" % amfVersion,
-    "com.storm-enroute" %% "scalameter" % "0.8.2"
+    "com.storm-enroute" %% "scalameter" % "0.8.2",
+    "org.raml" % "raml-parser-2" % "1.0.18-SNAPSHOT",
+    "org.raml" % "raml-parser" % "0.8.21"
   ),
   resolvers ++= List(Common.releasesPublic, Common.snapshots, Common.external, Common.scalaMeter, Resolver.mavenLocal),
   credentials ++= Common.credentials()

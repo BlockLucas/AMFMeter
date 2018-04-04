@@ -1,8 +1,10 @@
 package org.mule.amf
 
-import amf.AMF
+import amf.core.benchmark
+import amf.client.AMF
 import amf.client.model.document.BaseUnit
 import amf.client.validate.{ValidationReport, ValidationResult}
+import amf.core.benchmark.ExecutionLog
 import org.mule.core.Specs.APIType
 
 object AmfValidationHelper {
@@ -18,7 +20,12 @@ object AmfValidationHelper {
   }
 
   private def validate(kind: APIType, baseUnit: BaseUnit): ValidationReport = {
-    AMF.validate(baseUnit, kind.label, kind.label).get()
+//    ExecutionLog.start()
+    val result = AMF.validate(baseUnit, kind.label, kind.label).get()
+    result.conforms
+    println(result.results)
+//    ExecutionLog.finish()
+    result
   }
 
   def handleValidationResults(amfResults: List[ValidationResult]): String = {
