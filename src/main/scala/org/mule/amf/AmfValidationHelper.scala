@@ -20,11 +20,12 @@ object AmfValidationHelper {
   }
 
   private def validate(kind: APIType, baseUnit: BaseUnit): ValidationReport = {
-//    ExecutionLog.start()
-    val result = AMF.validate(baseUnit, kind.label, kind.label).get()
-    result.conforms
-    println(result.results)
-//    ExecutionLog.finish()
+    //    ExecutionLog.start()
+    val profile = AmfObjectsHandler.getProfileName(kind)
+    val result = AMF.validate(baseUnit, profile, profile.messageStyle).get()
+//    result.conforms
+//    println(result.results)
+    //    ExecutionLog.finish()
     result
   }
 

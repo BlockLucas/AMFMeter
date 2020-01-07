@@ -12,34 +12,34 @@ case class AMFLogReporter[T]() extends Reporter[T] {
 
   def report(result: CurveData[T], persistor: Persistor) {
     // output context
-    log(s"::::Benchmark ${result.context.scope}::::")
-    log(s"::Machine Data::")
+    println(s"::::Benchmark ${result.context.scope}::::")
+    println(s"::Machine Data::")
     val machineKeys = result.context.properties
       .filterKeys(Context.machine.properties.keySet.contains).toSeq.sortBy(_._1)
     for ((key, value) <- machineKeys) {
-      log(s"$key: $value")
+      println(s"$key: $value")
     }
-    log("")
-    log(s"::Depedencies Data::")
+    println("")
+    println(s"::Depedencies Data::")
     val amfVersion = DependenciesUtils.getDependencyVersion("amf-client")
-    log(s"amfVersion: $amfVersion")
-    log("")
+    println(s"amfVersion: $amfVersion")
+    println("")
 
-    log(s"::Measurements Data::")
+    println(s"::Measurements Data::")
     // output measurements
     for (measurement <- result.measurements) {
-      log(s"${measurement.params}: ")
-      log(s"Executions: ${measurement.data.complete.size}")
-      log(s"Time: ${measurement.value.asInstanceOf[Double].toLong} ${measurement.units}")
-      log(s"All Times: {${measurement.complete.map(_.asInstanceOf[Double].toLong).mkString(", ")}}")
-      log("")
+      println(s"${measurement.params}: ")
+      println(s"Executions: ${measurement.data.complete.size}")
+      println(s"Time: ${measurement.value.asInstanceOf[Double].toLong} ${measurement.units}")
+      println(s"All Times: {${measurement.complete.map(_.asInstanceOf[Double].toLong).mkString(", ")}}")
+      println("")
     }
 
     // add a new line
-    log("")
-    log("")
+    println("")
+    println("")
 
-//    log(s"::::Benchmark Tony: ${result.context.scope}::::")
+//    println(s"::::Benchmark Tony: ${result.context.scope}::::")
 //    ExecutionLog.buildReport
   }
 

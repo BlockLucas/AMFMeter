@@ -67,9 +67,9 @@ object AMFBenchmarkValidation
 
     AmfValidationHelper.handleValidation(apiKind, baseUnit) match {
       case Right(r) =>
-        if (!r.conforms) {
-          println(s"AMF VALIDATION ERROR: ${AmfValidationHelper.handleValidationResults(r.results.asScala.toList)}")
-        } // else do nothing
+//        if (!r.conforms) {
+//          println(s"AMF VALIDATION ERROR")
+//        } // else do nothing
       case Left(e) => AMFBenchmarkCommon.printError(s"AMF VALIDATION ERROR: ${e.getMessage}", e, file)
     }
   }

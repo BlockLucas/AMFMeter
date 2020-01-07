@@ -7,22 +7,20 @@ object Common {
 
   private val nexus = "https://repository-master.mulesoft.org/nexus/content/repositories"
 
-  val releasesPublic: MavenRepository = "MuleSoft private releases" at s"$nexus/releases"
-  //  val releasesPrivate: MavenRepository  = "MuleSoft private releases" at s"$nexus/ci-releases"
-  val snapshots: MavenRepository = "MuleSoft private snapshots" at s"$nexus/ci-snapshots"
-  val external: MavenRepository =  "MuleSoft external snapshots" at "https://repository.mulesoft.org/nexus/content/repositories/snapshots"
+  val snapshots: MavenRepository = "MuleSoft snapshots" at s"$nexus/snapshots"
+  val releases: MavenRepository  = "MuleSoft releases" at s"$nexus/releases"
   val scalaMeter: MavenRepository =  "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/releases"
 
   val settings: Seq[Def.Setting[_]] = Seq(
     organization := organizationName,
-    scalaVersion := "2.12.2",
+    scalaVersion := "2.12.10",
     parallelExecution in Test := false,
     fork in Test := false,
     scalacOptions ++= Seq("-unchecked"/*, "-deprecation", "-Xfatal-warnings" */),
     scalacOptions ++= Seq("-encoding", "utf-8")
   )
 
-  val publish: Def.Setting[_] = publishTo := Some(if (isSnapshot.value) snapshots else releasesPublic)
+  val publish: Def.Setting[_] = publishTo := Some(if (isSnapshot.value) snapshots else releases)
 
   def credentials(): Seq[Credentials] = {
     val cs =
